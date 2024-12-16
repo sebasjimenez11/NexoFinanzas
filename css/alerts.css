@@ -1,0 +1,36 @@
+/* Botón de éxito (verde oscuro) */
+.btn-success {
+    background-color: #006400 !important; /* Verde oscuro */
+    color: #ffffff !important; /* Texto blanco */
+  }
+  
+  /* Botón de advertencia (naranja oscuro) */
+  .btn-warning {
+    background-color: #ff8c00 !important; /* Naranja oscuro */
+    color: #ffffff !important;
+  }
+  
+  /* Botón de error (rojo oscuro) */
+  .btn-error {
+    background-color: #8b0000 !important; /* Rojo oscuro */
+    color: #ffffff !important;
+  }
+  
+  /* Botón de información (azul oscuro) */
+  .btn-info {
+    background-color: #004085 !important; /* Azul oscuro */
+    color: #ffffff !important;
+  }
+  
+  /* Botón de confirmación (negro/gris oscuro) */
+  .btn-confirm {
+    background-color: #333333 !important; /* Gris oscuro */
+    color: #ffffff !important;
+  }
+  
+  /* Botón de cancelación (gris más claro) */
+  .btn-cancel {
+    background-color: #555555 !important; /* Gris medio */
+    color: #ffffff !important;
+  }
+  
