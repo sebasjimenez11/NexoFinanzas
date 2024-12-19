@@ -24,3 +24,5 @@ const getAllStorages = () => {
       storages[key] = JSON.parse(localStorage.getItem(key)); 
   return storages;
 };
+
+export { setStorages, getStorages, removeStorages, clearStorages, getAllStorages };

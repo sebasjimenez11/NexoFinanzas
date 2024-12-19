@@ -1,4 +1,4 @@
-import { alertError } from "../funciones/alerts";
+import { alertError } from "../funciones/alerts.js";
 
 export class User {  // Mejor utilizar PascalCase para las clases
     static counterUser = 0;  // Asegúrate de inicializar el contador
@@ -62,12 +62,11 @@ export class User {  // Mejor utilizar PascalCase para las clases
 
     // Método para obtener toda la información del usuario
     getUserInfo() {
-        return {
-            id : this.Id, // Devuelve el id único generado
+        return {[this.Id]: { 
             nombre: this.Nombre,
             apellido: this.Apellido,
             email: this.Email,
             contrasena : this.Contrasena
-        };
+        }}
     }
 }
