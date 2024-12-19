@@ -47,6 +47,15 @@ export function iniciarSesion(data) {
     alertOk("Login Exitoso", "Bienvenido al Sistema.");
     setStorages("idUser", id); // Guardar el id del usuario
     mostrarDashboard();
+    setTimeout(() => {
+        alertInfo(
+          "Sesión Expirada",
+          "Su sesión ha expirado. Por favor inicie sesión nuevamente."
+        );
+        removeStorages("idUser");
+        containerApp.innerHTML = "";
+        containerApp.appendChild(createHorizontalMenu());
+      }, 300000);
   } else {
     alertError(
       "Error de Login",

@@ -14,16 +14,6 @@ const containerApp = document.getElementById("container-app");
 const app = new App();
 
 document.addEventListener("DOMContentLoaded", () => {
-  setTimeout(() => {
-    alertInfo(
-      "Sesión Expirada",
-      "Su sesión ha expirado. Por favor inicie sesión nuevamente."
-    );
-    removeStorages("idUser");
-    containerApp.innerHTML = "";
-    containerApp.appendChild(createHorizontalMenu());
-  }, 150000);
-
   if (getStorages("idUser")) {
     containerApp.innerHTML = "";
     containerApp.appendChild(createSidebarMenu());
