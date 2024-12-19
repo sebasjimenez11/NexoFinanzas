@@ -1,16 +1,19 @@
 import { alertError } from "../funciones/alerts.js";
+import { getStorages, setStorages } from "../funciones/storages.js";
 
 export class User {  // Mejor utilizar PascalCase para las clases
-    static counterUser = 0;  // Asegúrate de inicializar el contador
+  
 
     #nombre;
     #contrasena;
     #apellido;
     #email;
-    Id;  // Declarar el Id que se usará para cada instancia
+    Id;  
 
     constructor() {
-        this.Id = User.counterUser++;  // Asigna un ID único a cada instancia y luego incrementa el contador
+        let conunter = getStorages('counter-user') ? parseInt(getStorages('counter-user')) : 1;
+        this.Id = conunter++;  // Asigna un ID único a cada instancia y luego incrementa el contador
+        setStorages('counter-user', conunter);
     }
 
     // Getter y Setter para el nombre

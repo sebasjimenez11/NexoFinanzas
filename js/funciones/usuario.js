@@ -1,50 +1,52 @@
 import { User } from "../clases/User.js";
-import { alertOk, alertError } from "./alerts.js";
-import { getStorages, setStorages, getAllStorages } from "./storages.js";
+import { alertOk, alertError, alertConfirm } from "./alerts.js";
+import { getStorages, setStorages, getAllStorages, removeStorages } from "./storages.js";
 import { createForm } from "./formulario.js";
 import { App } from "../clases/App.js";
-import { createHorizontalMenu } from "./menus.js";
+import { createHorizontalMenu, createSidebarMenu } from "./menus.js";
 // const continerForm = document.getElementById("contenedor-login-register");
 const containerApp = document.getElementById("container-app");
 const app = new App();
 export function registroUser(data) {
   const users = getStorages("usuarios") || {};
+  const user = new User();
 
   // Crear una nueva instancia de User
-  const user = new User();
 
   // Asignar los valores del formulario al usuario
   user.Nombre = data.nombre;
   user.Apellido = data.apellido;
   user.Email = data.correo;
-  user.Contrasena = data.contrasena;
+  user.Contrasena = data.password;
 
   // Obtener la información del usuario
   const userInfo = user.getUserInfo(); // Este devuelve un objeto con el userId como clave
 
-  // Agregar el nuevo usuario al objeto de usuarios
-  const userId = Object.keys(userInfo)[0]; // Obtener el userId del objeto
-
   // Guardar el usuario en el objeto de usuarios
-  users[userId] = userInfo[userId];
+  users[user.Id] = userInfo[user.Id];
 
   // Actualizar el almacenamiento con el objeto de usuarios
   setStorages("usuarios", users);
 
   // Mostrar mensaje de éxito
   alertOk("Registro Exitoso", "Usuario registrado correctamente.");
+  salirFormulario();
 }
 
 export function iniciarSesion(data) {
   const users = getStorages("usuarios") || {};
 
-  const user = Object.values(users).find(
-    (u) => u.email === data.correo && u.contrasena === data.password
+  // Iterar sobre las entradas [id, datos] del objeto `users`
+  const userEntry = Object.entries(users).find(
+    ([id, user]) =>
+      user.email === data.correo && user.contrasena === data.password
   );
 
-  if (user) {
+  if (userEntry) {
+    const [id, user] = userEntry; // Extraer id y datos del usuario
     alertOk("Login Exitoso", "Bienvenido al Sistema.");
-    setStorages("idUser", user.id);
+    setStorages("idUser", id); // Guardar el id del usuario
+    mostrarDashboard();
   } else {
     alertError(
       "Error de Login",
@@ -52,6 +54,7 @@ export function iniciarSesion(data) {
     );
   }
 }
+
 
 export function mostrarRegistro() {
   containerApp.innerHTML = "";
@@ -76,12 +79,10 @@ export function mostrarRegistro() {
     submitText: "Registro",
   };
 
-  // Crear el formulario y agregarlo al body
   const form = createForm(formConfig, (data) => registroUser(data));
 
   const div = app.mostrarRegistroLogin(form);
-  containerApp.appendChild(div)
-  //   continerForm.appendChild(form);
+  containerApp.appendChild(div);
 }
 
 export function mostrarInicioSesion() {
@@ -109,12 +110,23 @@ export function mostrarInicioSesion() {
   const div = app.mostrarRegistroLogin(form);
 
   containerApp.appendChild(div);
-  //   continerForm.appendChild(form);
 }
-export function salirFormulario(){
-    containerApp.innerHTML = "";
-    containerApp.appendChild(createHorizontalMenu());
-    containerApp.appendChild(app.mostrarInicio());
-};
 
-// continerForm.appendChild();
+export function CerrarSesion(){
+    alertConfirm("Cerrar Sesión", "¿Estás seguro de cerrar sesión?", () => {
+        removeStorages("idUser");
+        alertOk("Cierre de Sesión", "Sesión cerrada correctamente.");
+        salirFormulario();
+    })
+}
+
+export function salirFormulario() {
+  containerApp.innerHTML = "";
+  containerApp.appendChild(createHorizontalMenu());
+  containerApp.appendChild(app.mostrarInicio());
+}
+
+export function mostrarDashboard() {
+  containerApp.innerHTML = "";
+  containerApp.appendChild(createSidebarMenu());
+}

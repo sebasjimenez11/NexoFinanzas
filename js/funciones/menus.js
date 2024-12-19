@@ -1,4 +1,4 @@
-import { mostrarInicioSesion, mostrarRegistro  } from "./usuario.js";
+import { CerrarSesion, mostrarInicioSesion, mostrarRegistro  } from "./usuario.js";
 export function createHorizontalMenu() {
   const menuContainer = document.createElement("nav");
   menuContainer.classList.add("menu-horizontal");
@@ -73,11 +73,28 @@ export function createSidebarMenu() {
   const ul = document.createElement("ul");
   ul.classList.add("menu-items");
 
+  // Definición de elementos del menú con sus callbacks
   const menuItems = [
-    { text: "Resumen", icon: "bi bi-speedometer2" },
-    { text: "Registro Ingresos", icon: "bi bi-cash-coin" },
-    { text: "Registro Egresos", icon: "bi bi-credit-card" },
-    { text: "Metas Financieras", icon: "bi bi-flag" },
+    { 
+      text: "Resumen", 
+      icon: "bi bi-speedometer2", 
+      callback: () => console.log("Navegando a Resumen")
+    },
+    { 
+      text: "Registro Ingresos", 
+      icon: "bi bi-cash-coin", 
+      callback: () => console.log("Navegando a Registro Ingresos")
+    },
+    { 
+      text: "Registro Egresos", 
+      icon: "bi bi-credit-card", 
+      callback: () => console.log("Navegando a Registro Egresos")
+    },
+    { 
+      text: "Metas Financieras", 
+      icon: "bi bi-flag", 
+      callback: () => console.log("Navegando a Metas Financieras")
+    },
   ];
 
   menuItems.forEach((item) => {
@@ -92,6 +109,12 @@ export function createSidebarMenu() {
 
     link.appendChild(icon);
     link.appendChild(text);
+
+    // Agregar evento click con el callback
+    link.addEventListener("click", (e) => {
+      e.preventDefault(); // Prevenir comportamiento por defecto del enlace
+      item.callback();    // Ejecutar el callback asociado al elemento
+    });
 
     li.appendChild(link);
     ul.appendChild(li);
@@ -109,6 +132,13 @@ export function createSidebarMenu() {
 
   logoutLink.appendChild(logoutIcon);
   logoutLink.appendChild(logoutText);
+
+  // Agregar evento click al botón "Cerrar Sesión"
+  logoutLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    CerrarSesion();
+    // Aquí puedes agregar la lógica para cerrar sesión
+  });
 
   const logoutLi = document.createElement("li");
   logoutLi.classList.add("logout-container");
