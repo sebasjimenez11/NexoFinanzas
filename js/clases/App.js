@@ -75,7 +75,7 @@ export class App {
 
     return contenedor;
   }
-  
+
   //mostrar formulario de ingresos
   mostrarRegistroIngresos() {
     const formConfig = {
@@ -83,7 +83,15 @@ export class App {
       fields: [
         { type: "text", name: "descripcion", placeholder: "Descripción", label: "Descripción" },
         { type: "number", name: "monto", placeholder: "Monto", label: "Monto" },
-        { type: "text", name: "categoria", placeholder: "Categoría", label: "Categoría" },
+        {
+          type: "select", name: "categoria", options: [
+            "Salario",
+            "Freelance",
+            "Rentas",
+            "Inversiones",
+            "Otros ingresos"
+          ], placeholder: "Categoría", label: "Categoría"
+        },
       ],
       submitText: "Registrar",
     };
@@ -129,7 +137,19 @@ export class App {
       fields: [
         { type: "text", name: "descripcion", placeholder: "Descripción", label: "Descripción" },
         { type: "number", name: "monto", placeholder: "Monto", label: "Monto" },
-        { type: "text", name: "categoria", placeholder: "Categoría", label: "Categoría" },
+        {
+          type: "select", name: "categoria", options: [
+            "Alquiler/Hipoteca",
+            "Servicios",
+            "Alimentación",
+            "Transporte",
+            "Educación",
+            "Salud",
+            "Entretenimiento",
+            "Ropa y accesorios",
+            "Otros egresos"
+          ], placeholder: "Categoría", label: "Categoría"
+        },
       ],
       submitText: "Registrar",
     };
@@ -175,6 +195,18 @@ export class App {
       fields: [
         { type: "text", name: "descripcion", placeholder: "Descripción", label: "Descripción" },
         { type: "date", name: "fechaLimite", placeholder: "Fecha Límite", label: "Fecha Límite" },
+        {
+          type: "select", name: "objetivo", options: [
+            'seleccionar Opción',
+            "Ahorro",
+            "Viajes",
+            "Compra de vivienda",
+            "Pago de deudas",
+            "Fondo de emergencia",
+            "Inversión en negocios",
+            "Educación futura"
+          ], label: "Objetivo"},
+        {type: 'select', name: "prioridad", options: ['Alta', 'Baja', 'Media'] ,label : 'Prioridad'}, 
         { type: "number", name: "valor", placeholder: "Valor", label: "Valor" },
       ],
       submitText: "Registrar",
@@ -348,7 +380,7 @@ export class App {
     containerApp.appendChild(createSidebarMenu()); // Asegurar que el menú lateral se mantenga visible
     const tablaIngresos = document.createElement("div");
     tablaIngresos.classList.add("tabla-ingresos");
-  
+
     // Aquí puedes agregar el contenido de la tabla
     tablaIngresos.innerHTML = `
       <table>
@@ -364,7 +396,7 @@ export class App {
         </tbody>
       </table>
     `;
-  
+
     // Crear botón "+"
     const botonAgregar = document.createElement("button");
     botonAgregar.classList.add("btn-agregar");
@@ -430,7 +462,7 @@ export class App {
     containerApp.appendChild(createSidebarMenu()); // Asegurar que el menú lateral se mantenga visible
     const tablaEgresos = document.createElement("div");
     tablaEgresos.classList.add("tabla-egresos");
-  
+
     // Aquí puedes agregar el contenido de la tabla
     tablaEgresos.innerHTML = `
       <table>
@@ -446,7 +478,7 @@ export class App {
         </tbody>
       </table>
     `;
-  
+
     // Crear botón "+"
     const botonAgregar = document.createElement("button");
     botonAgregar.classList.add("btn-agregar");

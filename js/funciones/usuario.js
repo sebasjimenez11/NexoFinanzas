@@ -4,6 +4,7 @@ import { getStorages, setStorages, getAllStorages, removeStorages } from "./stor
 import { createForm } from "./formulario.js";
 import { App } from "../clases/App.js";
 import { createHorizontalMenu, createSidebarMenu } from "./menus.js";
+import { mostrarDashboard } from "./finanzas.js";
 // const continerForm = document.getElementById("contenedor-login-register");
 const containerApp = document.getElementById("container-app");
 const app = new App();
@@ -133,9 +134,4 @@ export function salirFormulario() {
   containerApp.innerHTML = "";
   containerApp.appendChild(createHorizontalMenu());
   containerApp.appendChild(app.mostrarInicio());
-}
-
-export function mostrarDashboard() {
-  containerApp.innerHTML = "";
-  containerApp.appendChild(createSidebarMenu());
 }

@@ -118,6 +118,21 @@ body {
 }
 
 /* ...existing code... */
+.dashboard-content {
+  margin-left: 260px;
+  /* Deja espacio para el menú lateral */
+  padding: 20px;
+  background-color: var(--color-light);
+  /* Fondo claro para el área principal */
+  min-height: 100vh;
+  /* Asegura que ocupe toda la altura de la pantalla */
+  overflow-y: auto;
+  /* Permite desplazamiento vertical si el contenido es extenso */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
 
 /* Menú lateral */
 .menu-lateral {

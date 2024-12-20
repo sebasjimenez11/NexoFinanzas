@@ -1,6 +1,7 @@
 import { CerrarSesion, mostrarInicioSesion, mostrarRegistro } from "./usuario.js";
 import { App } from "../clases/App.js";
 import { getStorages } from "./storages.js";
+import { mostrarDashboard } from "./finanzas.js";
 
 export function createHorizontalMenu() {
   const menuContainer = document.createElement("nav");
@@ -89,31 +90,31 @@ export function createSidebarMenu() {
 
   // Definición de elementos del menú con sus callbacks
   const menuItems = [
-    { 
-      text: "Resumen", 
-      icon: "bi bi-speedometer2", 
-      callback: () => console.log("Navegando a Resumen")
+    {
+      text: "Resumen",
+      icon: "bi bi-speedometer2",
+      callback: () => mostrarDashboard()
     },
-    { 
-      text: "Registro Ingresos", 
-      icon: "bi bi-cash-coin", 
+    {
+      text: "Registro Ingresos",
+      icon: "bi bi-cash-coin",
       callback: () => {
         const app = new App();
-       app.mostrarTablaIngresos();
-      
+        app.mostrarTablaIngresos();
+
       }
     },
-    { 
-      text: "Registro Egresos", 
-      icon: "bi bi-credit-card", 
+    {
+      text: "Registro Egresos",
+      icon: "bi bi-credit-card",
       callback: () => {
         const app = new App();
         app.mostrarTablaEgresos();
       }
     },
-    { 
-      text: "Metas Financieras", 
-      icon: "bi bi-flag", 
+    {
+      text: "Metas Financieras",
+      icon: "bi bi-flag",
       callback: () => {
         const app = new App();
         app.mostrarMetas();
