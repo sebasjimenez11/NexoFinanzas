@@ -1,4 +1,9 @@
 import { salirFormulario } from "../funciones/usuario.js";
+import { createForm } from "../funciones/formulario.js";
+import { getStorages } from "../funciones/storages.js";
+import { Finanzas } from "./Finanzas.js";
+import { alertOk } from "../funciones/alerts.js";
+import { createSidebarMenu } from "../funciones/menus.js";
 
 export class App {
   mostrarInicio() {
@@ -70,4 +75,313 @@ export class App {
 
     return contenedor;
   }
+  
+  //mostrar formulario de ingresos
+  mostrarRegistroIngresos() {
+    const formConfig = {
+      title: "Registrar Ingreso",
+      fields: [
+        { type: "text", name: "descripcion", placeholder: "Descripción", label: "Descripción" },
+        { type: "number", name: "monto", placeholder: "Monto", label: "Monto" },
+        { type: "text", name: "categoria", placeholder: "Categoría", label: "Categoría" },
+      ],
+      submitText: "Registrar",
+    };
+
+    const form = createForm(formConfig, (data) => {
+      const finanzas = new Finanzas(1); // Reemplazar con el ID de usuario correcto
+      finanzas.setIngreso(data.descripcion, parseFloat(data.monto), data.categoria);
+      alertOk("Ingreso Registrado", "El ingreso ha sido registrado correctamente.");
+      document.body.removeChild(modalOverlay); // Eliminar el modal después de registrar
+      this.actualizarTablaIngresos(); // Actualizar la tabla de ingresos
+    });
+
+    // Crear un overlay para el modal
+    const modalOverlay = document.createElement("div");
+    modalOverlay.classList.add("modal-overlay");
+
+    // Crear el contenedor del formulario
+    const modalContainer = document.createElement("div");
+    modalContainer.classList.add("modal-container");
+    modalContainer.appendChild(form);
+
+    // Agregar el contenedor del formulario al overlay
+    modalOverlay.appendChild(modalContainer);
+
+    // Agregar el overlay al body
+    document.body.appendChild(modalOverlay);
+  }
+
+  //mostrar formulario de egresos
+  mostrarRegistroEgresos() {
+    const formConfig = {
+      title: "Registrar Egreso",
+      fields: [
+        { type: "text", name: "descripcion", placeholder: "Descripción", label: "Descripción" },
+        { type: "number", name: "monto", placeholder: "Monto", label: "Monto" },
+        { type: "text", name: "categoria", placeholder: "Categoría", label: "Categoría" },
+      ],
+      submitText: "Registrar",
+    };
+
+    const form = createForm(formConfig, (data) => {
+      const finanzas = new Finanzas(1); // Reemplazar con el ID de usuario correcto
+      finanzas.setEgreso(data.descripcion, parseFloat(data.monto), data.categoria);
+      alertOk("Egreso Registrado", "El egreso ha sido registrado correctamente.");
+      document.body.removeChild(modalOverlay); // Eliminar el modal después de registrar
+      this.actualizarTablaEgresos(); // Actualizar la tabla de egresos
+    });
+
+    // Crear un overlay para el modal
+    const modalOverlay = document.createElement("div");
+    modalOverlay.classList.add("modal-overlay");
+
+    // Crear el contenedor del formulario
+    const modalContainer = document.createElement("div");
+    modalContainer.classList.add("modal-container");
+    modalContainer.appendChild(form);
+
+    // Agregar el contenedor del formulario al overlay
+    modalOverlay.appendChild(modalContainer);
+
+    // Agregar el overlay al body
+    document.body.appendChild(modalOverlay);
+  }
+
+  //mostrar formulario de metas
+  mostrarRegistroMetas() {
+    const formConfig = {
+      title: "Registrar Meta Financiera",
+      fields: [
+        { type: "text", name: "descripcion", placeholder: "Descripción", label: "Descripción" },
+        { type: "date", name: "fechaLimite", placeholder: "Fecha Límite", label: "Fecha Límite" },
+        { type: "number", name: "valor", placeholder: "Valor", label: "Valor" },
+      ],
+      submitText: "Registrar",
+    };
+
+    const form = createForm(formConfig, (data) => {
+      const finanzas = new Finanzas(1); // Reemplazar con el ID de usuario correcto
+      finanzas.setMeta(data.descripcion, data.fechaLimite, parseFloat(data.valor));
+      alertOk("Meta Registrada", "La meta ha sido registrada correctamente.");
+      document.body.removeChild(modalOverlay); // Eliminar el modal después de registrar
+      this.mostrarMetas(); // Actualizar la vista de metas
+    });
+
+    // Crear un overlay para el modal
+    const modalOverlay = document.createElement("div");
+    modalOverlay.classList.add("modal-overlay");
+
+    // Crear el contenedor del formulario
+    const modalContainer = document.createElement("div");
+    modalContainer.classList.add("modal-container");
+    modalContainer.appendChild(form);
+
+    // Agregar el contenedor del formulario al overlay
+    modalOverlay.appendChild(modalContainer);
+
+    // Agregar el overlay al body
+    document.body.appendChild(modalOverlay);
+  }
+
+  mostrarMetas() {
+    const containerApp = document.getElementById("container-app");
+    containerApp.innerHTML = ""; // Limpiar contenido previo
+    containerApp.appendChild(createSidebarMenu()); // Asegurar que el menú lateral se mantenga visible
+
+    const metasContainer = document.createElement("div");
+    metasContainer.classList.add("metas-container");
+
+    this.actualizarMetas(metasContainer); // Llamar a la función para mostrar las metas registradas
+
+    const texto = document.createElement("p");
+    texto.textContent = "Añadir nueva meta";
+
+    // Crear botón "+"
+    const botonAgregar = document.createElement("button");
+    botonAgregar.classList.add("btn-agregar");
+    botonAgregar.textContent = "+";
+
+    // Agregar evento click al botón "+"
+    botonAgregar.addEventListener("click", () => {
+      this.mostrarRegistroMetas();
+    });
+
+    metasContainer.appendChild(texto);
+    metasContainer.appendChild(botonAgregar);
+    containerApp.appendChild(metasContainer);
+  }
+
+  actualizarMetas(metasContainer) {
+    const finanzas = new Finanzas(1); // Reemplazar con el ID de usuario correcto
+    const metas = finanzas.getMetas();
+    const colors = ["#FFCDD2", "#F8BBD0", "#E1BEE7", "#D1C4E9", "#C5CAE9", "#BBDEFB", "#B3E5FC", "#B2EBF2", "#B2DFDB", "#C8E6C9"];
+
+    metas.forEach((meta, index) => {
+      const metaDiv = document.createElement("div");
+      metaDiv.classList.add("meta");
+      metaDiv.style.backgroundColor = colors[index % colors.length]; // Asignar un color diferente
+
+      metaDiv.innerHTML = `
+        <h3>${meta.descripcion}</h3>
+        <p>Fecha Límite: ${meta.fechaLimite}</p>
+        <p>Valor: ${meta.valor}</p>
+        <p>Progreso: ${meta.progreso || 0}</p>
+      `;
+
+      metaDiv.addEventListener("click", () => {
+        metaDiv.classList.toggle("meta-selected");
+        this.mostrarFormularioMeta(meta, index);
+      });
+
+      metasContainer.appendChild(metaDiv);
+    });
+  }
+
+  mostrarFormularioMeta(meta, index) {
+    const formConfig = {
+      title: `Añadir a Meta: ${meta.descripcion}`,
+      fields: [
+        { type: "number", name: "monto", placeholder: "Monto", label: "Monto" },
+      ],
+      submitText: "Añadir",
+    };
+
+    const form = createForm(formConfig, (data) => {
+      const finanzas = new Finanzas(1); // Reemplazar con el ID de usuario correcto
+      finanzas.addToMeta(index, parseFloat(data.monto));
+      alertOk("Progreso Actualizado", "El progreso de la meta ha sido actualizado correctamente.");
+      document.body.removeChild(modalOverlay); // Eliminar el modal después de registrar
+      this.mostrarMetas(); // Actualizar la vista de metas
+    });
+
+    // Crear un overlay para el modal
+    const modalOverlay = document.createElement("div");
+    modalOverlay.classList.add("modal-overlay");
+
+    // Crear el contenedor del formulario
+    const modalContainer = document.createElement("div");
+    modalContainer.classList.add("modal-container");
+    modalContainer.appendChild(form);
+
+    // Agregar el contenedor del formulario al overlay
+    modalOverlay.appendChild(modalContainer);
+
+    // Agregar el overlay al body
+    document.body.appendChild(modalOverlay);
+  }
+
+  // mostrar tabla registro de ingresos
+  mostrarTablaIngresos() {
+    const containerApp = document.getElementById("container-app");
+    containerApp.innerHTML = ""; // Limpiar contenido previo
+    containerApp.appendChild(createSidebarMenu()); // Asegurar que el menú lateral se mantenga visible
+    const tablaIngresos = document.createElement("div");
+    tablaIngresos.classList.add("tabla-ingresos");
+  
+    // Aquí puedes agregar el contenido de la tabla
+    tablaIngresos.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>Descripción</th>
+            <th>Monto</th>
+            <th>Categoría</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-ingresos-body">
+          <!-- Aquí se agregarán las filas de ingresos -->
+        </tbody>
+      </table>
+    `;
+  
+    // Crear botón "+"
+    const botonAgregar = document.createElement("button");
+    botonAgregar.classList.add("btn-agregar");
+    botonAgregar.textContent = "+";
+
+    // Agregar evento click al botón "+"
+    botonAgregar.addEventListener("click", () => {
+      this.mostrarRegistroIngresos();
+    });
+
+    tablaIngresos.appendChild(botonAgregar);
+    containerApp.appendChild(tablaIngresos);
+
+    this.actualizarTablaIngresos(); // Llamar a la función para llenar la tabla inicialmente
+  }
+
+  actualizarTablaIngresos() {
+    const finanzas = new Finanzas(1); // Reemplazar con el ID de usuario correcto
+    const ingresos = finanzas.getIngresos();
+    const tbody = document.getElementById("tabla-ingresos-body");
+    tbody.innerHTML = ""; // Limpiar contenido previo
+
+    ingresos.forEach((ingreso) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${ingreso.descripcion}</td>
+        <td>${ingreso.monto}</td>
+        <td>${ingreso.categoria}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  mostrarTablaEgresos() {
+    const containerApp = document.getElementById("container-app");
+    containerApp.innerHTML = ""; // Limpiar contenido previo
+    containerApp.appendChild(createSidebarMenu()); // Asegurar que el menú lateral se mantenga visible
+    const tablaEgresos = document.createElement("div");
+    tablaEgresos.classList.add("tabla-egresos");
+  
+    // Aquí puedes agregar el contenido de la tabla
+    tablaEgresos.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>Descripción</th>
+            <th>Monto</th>
+            <th>Categoría</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-egresos-body">
+          <!-- Aquí se agregarán las filas de egresos -->
+        </tbody>
+      </table>
+    `;
+  
+    // Crear botón "+"
+    const botonAgregar = document.createElement("button");
+    botonAgregar.classList.add("btn-agregar");
+    botonAgregar.textContent = "+";
+
+    // Agregar evento click al botón "+"
+    botonAgregar.addEventListener("click", () => {
+      this.mostrarRegistroEgresos();
+    });
+
+    tablaEgresos.appendChild(botonAgregar);
+    containerApp.appendChild(tablaEgresos);
+
+    this.actualizarTablaEgresos(); // Llamar a la función para llenar la tabla inicialmente
+  }
+
+  actualizarTablaEgresos() {
+    const finanzas = new Finanzas(1); // Reemplazar con el ID de usuario correcto
+    const egresos = finanzas.getEgresos();
+    const tbody = document.getElementById("tabla-egresos-body");
+    tbody.innerHTML = ""; // Limpiar contenido previo
+
+    egresos.forEach((egreso) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${egreso.descripcion}</td>
+        <td>${egreso.monto}</td>
+        <td>${egreso.categoria}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
 }

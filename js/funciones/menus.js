@@ -1,4 +1,7 @@
-import { CerrarSesion, mostrarInicioSesion, mostrarRegistro  } from "./usuario.js";
+import { CerrarSesion, mostrarInicioSesion, mostrarRegistro } from "./usuario.js";
+import { App } from "../clases/App.js";
+import { getStorages } from "./storages.js";
+
 export function createHorizontalMenu() {
   const menuContainer = document.createElement("nav");
   menuContainer.classList.add("menu-horizontal");
@@ -69,6 +72,17 @@ export function createSidebarMenu() {
   logoDiv.appendChild(logoImg);
   logoDiv.appendChild(logoText);
 
+  // Obtener el nombre del usuario
+  const userId = getStorages("idUser");
+  const users = getStorages("usuarios") || {};
+  const userName = users[userId]?.nombre || "Usuario";
+
+  const welcomeText = document.createElement("p");
+  welcomeText.textContent = `Bienvenido ${userName}`;
+  welcomeText.classList.add("welcome-text");
+
+  logoDiv.appendChild(welcomeText);
+
   // Lista de opciones
   const ul = document.createElement("ul");
   ul.classList.add("menu-items");
@@ -83,17 +97,27 @@ export function createSidebarMenu() {
     { 
       text: "Registro Ingresos", 
       icon: "bi bi-cash-coin", 
-      callback: () => console.log("Navegando a Registro Ingresos")
+      callback: () => {
+        const app = new App();
+       app.mostrarTablaIngresos();
+      
+      }
     },
     { 
       text: "Registro Egresos", 
       icon: "bi bi-credit-card", 
-      callback: () => console.log("Navegando a Registro Egresos")
+      callback: () => {
+        const app = new App();
+        app.mostrarTablaEgresos();
+      }
     },
     { 
       text: "Metas Financieras", 
       icon: "bi bi-flag", 
-      callback: () => console.log("Navegando a Metas Financieras")
+      callback: () => {
+        const app = new App();
+        app.mostrarMetas();
+      }
     },
   ];
 

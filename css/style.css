@@ -108,7 +108,16 @@ body {
     color: var(--text-color);
 }
 
+/* ...existing code... */
 
+.welcome-text {
+  font-size: 12px; /* Reducir aún más el tamaño de la letra */
+  color: var(--text-color);
+  margin-top: 10px;
+  text-align: center; /* Centrar el texto */
+}
+
+/* ...existing code... */
 
 /* Menú lateral */
 .menu-lateral {
@@ -308,6 +317,135 @@ body {
 
 .btn-salir:hover {
   text-decoration: underline;
+}
+
+/* Estilos para la tabla de ingresos */
+.tabla-ingresos {
+  margin-left: 260px; /* Deja espacio para el menú lateral */
+  padding: 20px;
+}
+
+.tabla-ingresos table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla-ingresos th, .tabla-ingresos td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.tabla-ingresos th {
+  background-color: var(--color-secondary);
+  color: var(--text-color);
+}
+
+.tabla-egresos {
+  margin-left: 260px; /* Deja espacio para el menú lateral */
+  padding: 20px;
+}
+
+.tabla-egresos table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla-egresos th, .tabla-egresos td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.tabla-egresos th {
+  background-color: var(--color-secondary);
+  color: var(--text-color);
+}
+
+.btn-agregar {
+  display: block;
+  margin: 20px auto 0;
+  background-color: var(--color-accent);
+  color: var(--text-color);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.btn-agregar:hover {
+  background: linear-gradient(to right, var(--hover-color), var(--color-accent));
+  color: var(--color-secondary);
+}
+
+.btn-agregar:active {
+  background: var(--hover-color);
+  color: var(--color-primary);
+}
+
+/* Estilos para el modal del formulario de registro de ingresos */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(216, 209, 209, 0.74);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-container {
+  background-color: var(--color-light);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(241, 239, 239, 0.2);
+  width: 90%;
+  max-width: 500px;
+}
+
+/* Estilos para la vista de metas */
+.metas-container {
+  margin-left: 260px; /* Deja espacio para el menú lateral */
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100vh;
+}
+
+.metas-container p {
+  font-size: 18px;
+  margin-top: 40px; /* Añadir margen superior */
+  margin-bottom: 20px;
+}
+
+.meta {
+  background-color: var(--color-light);
+  border: 1px solid var(--hover-color);
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 20px;
+  width: 80%;
+  max-width: 400px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.meta-selected {
+  background-color: var(--hover-color);
+}
+
+.meta h3 {
+  margin-bottom: 10px;
+}
+
+.meta p {
+  margin: 5px 0;
 }
 
 
