@@ -406,6 +406,27 @@ body {
   max-width: 500px;
 }
 
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: red;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-button:hover {
+  background: darkred;
+}
+
 /* Estilos para la vista de metas */
 .metas-container {
   margin-left: 260px; /* Deja espacio para el menú lateral */
@@ -447,6 +468,34 @@ body {
 .meta p {
   margin: 5px 0;
 }
+
+/* ...existing code... */
+
+.btn-modificar, .btn-eliminar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  margin: 0 5px;
+}
+
+.btn-modificar i {
+  color: #1aa391;
+}
+
+.btn-eliminar i {
+  color: red;
+}
+
+.btn-modificar:hover i {
+  color: #0a1f33;
+}
+
+.btn-eliminar:hover i {
+  color: darkred;
+}
+
+/* ...existing code... */
 
 
 

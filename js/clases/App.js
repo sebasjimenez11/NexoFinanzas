@@ -2,7 +2,7 @@ import { salirFormulario } from "../funciones/usuario.js";
 import { createForm } from "../funciones/formulario.js";
 import { getStorages } from "../funciones/storages.js";
 import { Finanzas } from "./Finanzas.js";
-import { alertOk } from "../funciones/alerts.js";
+import { alertOk, alertConfirm } from "../funciones/alerts.js";
 import { createSidebarMenu } from "../funciones/menus.js";
 
 export class App {
@@ -103,6 +103,16 @@ export class App {
     // Crear el contenedor del formulario
     const modalContainer = document.createElement("div");
     modalContainer.classList.add("modal-container");
+
+    // Crear botón de cierre (X)
+    const closeButton = document.createElement("button");
+    closeButton.classList.add("close-button");
+    closeButton.innerHTML = "&times;";
+    closeButton.addEventListener("click", () => {
+      document.body.removeChild(modalOverlay);
+    });
+
+    modalContainer.appendChild(closeButton);
     modalContainer.appendChild(form);
 
     // Agregar el contenedor del formulario al overlay
@@ -139,6 +149,16 @@ export class App {
     // Crear el contenedor del formulario
     const modalContainer = document.createElement("div");
     modalContainer.classList.add("modal-container");
+
+    // Crear botón de cierre (X)
+    const closeButton = document.createElement("button");
+    closeButton.classList.add("close-button");
+    closeButton.innerHTML = "&times;";
+    closeButton.addEventListener("click", () => {
+      document.body.removeChild(modalOverlay);
+    });
+
+    modalContainer.appendChild(closeButton);
     modalContainer.appendChild(form);
 
     // Agregar el contenedor del formulario al overlay
@@ -175,6 +195,16 @@ export class App {
     // Crear el contenedor del formulario
     const modalContainer = document.createElement("div");
     modalContainer.classList.add("modal-container");
+
+    // Crear botón de cierre (X)
+    const closeButton = document.createElement("button");
+    closeButton.classList.add("close-button");
+    closeButton.innerHTML = "&times;";
+    closeButton.addEventListener("click", () => {
+      document.body.removeChild(modalOverlay);
+    });
+
+    modalContainer.appendChild(closeButton);
     modalContainer.appendChild(form);
 
     // Agregar el contenedor del formulario al overlay
@@ -192,8 +222,6 @@ export class App {
     const metasContainer = document.createElement("div");
     metasContainer.classList.add("metas-container");
 
-    this.actualizarMetas(metasContainer); // Llamar a la función para mostrar las metas registradas
-
     const texto = document.createElement("p");
     texto.textContent = "Añadir nueva meta";
 
@@ -210,12 +238,18 @@ export class App {
     metasContainer.appendChild(texto);
     metasContainer.appendChild(botonAgregar);
     containerApp.appendChild(metasContainer);
+
+    this.actualizarMetas(metasContainer); // Llamar a la función para mostrar las metas registradas
   }
 
   actualizarMetas(metasContainer) {
     const finanzas = new Finanzas(1); // Reemplazar con el ID de usuario correcto
     const metas = finanzas.getMetas();
     const colors = ["#FFCDD2", "#F8BBD0", "#E1BEE7", "#D1C4E9", "#C5CAE9", "#BBDEFB", "#B3E5FC", "#B2EBF2", "#B2DFDB", "#C8E6C9"];
+
+    // Limpiar solo las metas del contenedor antes de volver a renderizar
+    const existingElements = metasContainer.querySelectorAll(".meta");
+    existingElements.forEach(element => element.remove());
 
     metas.forEach((meta, index) => {
       const metaDiv = document.createElement("div");
@@ -227,6 +261,12 @@ export class App {
         <p>Fecha Límite: ${meta.fechaLimite}</p>
         <p>Valor: ${meta.valor}</p>
         <p>Progreso: ${meta.progreso || 0}</p>
+        <button class="btn-modificar" data-index="${index}">
+          <i class="bi bi-pencil-square"></i>
+        </button>
+        <button class="btn-eliminar" data-index="${index}">
+          <i class="bi bi-trash"></i>
+        </button>
       `;
 
       metaDiv.addEventListener("click", () => {
@@ -235,6 +275,26 @@ export class App {
       });
 
       metasContainer.appendChild(metaDiv);
+    });
+
+    // Agregar eventos a los botones de modificar y eliminar
+    metasContainer.querySelectorAll(".btn-modificar").forEach((button) => {
+      button.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevenir el evento de selección de meta
+        const index = e.currentTarget.getAttribute("data-index");
+        this.mostrarFormularioModificarMeta(index);
+      });
+    });
+
+    metasContainer.querySelectorAll(".btn-eliminar").forEach((button) => {
+      button.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevenir el evento de selección de meta
+        const index = e.currentTarget.getAttribute("data-index");
+        alertConfirm("Eliminar Meta", "¿Estás seguro de eliminar esta meta?", () => {
+          finanzas.eliminarMeta(index);
+          this.actualizarMetas(metasContainer);
+        });
+      });
     });
   }
 
@@ -262,6 +322,16 @@ export class App {
     // Crear el contenedor del formulario
     const modalContainer = document.createElement("div");
     modalContainer.classList.add("modal-container");
+
+    // Crear botón de cierre (X)
+    const closeButton = document.createElement("button");
+    closeButton.classList.add("close-button");
+    closeButton.innerHTML = "&times;";
+    closeButton.addEventListener("click", () => {
+      document.body.removeChild(modalOverlay);
+    });
+
+    modalContainer.appendChild(closeButton);
     modalContainer.appendChild(form);
 
     // Agregar el contenedor del formulario al overlay
@@ -317,14 +387,40 @@ export class App {
     const tbody = document.getElementById("tabla-ingresos-body");
     tbody.innerHTML = ""; // Limpiar contenido previo
 
-    ingresos.forEach((ingreso) => {
+    ingresos.forEach((ingreso, index) => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${ingreso.descripcion}</td>
         <td>${ingreso.monto}</td>
         <td>${ingreso.categoria}</td>
+        <td>
+          <button class="btn-modificar" data-index="${index}">
+            <i class="bi bi-pencil-square"></i>
+          </button>
+          <button class="btn-eliminar" data-index="${index}">
+            <i class="bi bi-trash"></i>
+          </button>
+        </td>
       `;
       tbody.appendChild(tr);
+    });
+
+    // Agregar eventos a los botones de modificar y eliminar
+    tbody.querySelectorAll(".btn-modificar").forEach((button) => {
+      button.addEventListener("click", (e) => {
+        const index = e.currentTarget.getAttribute("data-index");
+        this.mostrarFormularioModificarIngreso(index);
+      });
+    });
+
+    tbody.querySelectorAll(".btn-eliminar").forEach((button) => {
+      button.addEventListener("click", (e) => {
+        const index = e.currentTarget.getAttribute("data-index");
+        alertConfirm("Eliminar Ingreso", "¿Estás seguro de eliminar este ingreso?", () => {
+          finanzas.eliminarIngreso(index);
+          this.actualizarTablaIngresos();
+        });
+      });
     });
   }
 
@@ -373,15 +469,185 @@ export class App {
     const tbody = document.getElementById("tabla-egresos-body");
     tbody.innerHTML = ""; // Limpiar contenido previo
 
-    egresos.forEach((egreso) => {
+    egresos.forEach((egreso, index) => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${egreso.descripcion}</td>
         <td>${egreso.monto}</td>
         <td>${egreso.categoria}</td>
+        <td>
+          <button class="btn-modificar" data-index="${index}">
+            <i class="bi bi-pencil-square"></i>
+          </button>
+          <button class="btn-eliminar" data-index="${index}">
+            <i class="bi bi-trash"></i>
+          </button>
+        </td>
       `;
       tbody.appendChild(tr);
     });
+
+    // Agregar eventos a los botones de modificar y eliminar
+    tbody.querySelectorAll(".btn-modificar").forEach((button) => {
+      button.addEventListener("click", (e) => {
+        const index = e.currentTarget.getAttribute("data-index");
+        this.mostrarFormularioModificarEgreso(index);
+      });
+    });
+
+    tbody.querySelectorAll(".btn-eliminar").forEach((button) => {
+      button.addEventListener("click", (e) => {
+        const index = e.currentTarget.getAttribute("data-index");
+        alertConfirm("Eliminar Egreso", "¿Estás seguro de eliminar este egreso?", () => {
+          finanzas.eliminarEgreso(index);
+          this.actualizarTablaEgresos();
+        });
+      });
+    });
+  }
+
+  mostrarFormularioModificarIngreso(index) {
+    const finanzas = new Finanzas(1); // Reemplazar con el ID de usuario correcto
+    const ingreso = finanzas.getIngresos()[index];
+
+    const formConfig = {
+      title: "Modificar Ingreso",
+      fields: [
+        { type: "text", name: "descripcion", placeholder: "Descripción", label: "Descripción", value: ingreso.descripcion },
+        { type: "number", name: "monto", placeholder: "Monto", label: "Monto", value: ingreso.monto },
+        { type: "text", name: "categoria", placeholder: "Categoría", label: "Categoría", value: ingreso.categoria },
+      ],
+      submitText: "Modificar",
+    };
+
+    const form = createForm(formConfig, (data) => {
+      finanzas.eliminarIngreso(index);
+      finanzas.setIngreso(data.descripcion, parseFloat(data.monto), data.categoria);
+      alertOk("Ingreso Modificado", "El ingreso ha sido modificado correctamente.");
+      document.body.removeChild(modalOverlay); // Eliminar el modal después de modificar
+      this.actualizarTablaIngresos(); // Actualizar la tabla de ingresos
+    });
+
+    // Crear un overlay para el modal
+    const modalOverlay = document.createElement("div");
+    modalOverlay.classList.add("modal-overlay");
+
+    // Crear el contenedor del formulario
+    const modalContainer = document.createElement("div");
+    modalContainer.classList.add("modal-container");
+
+    // Crear botón de cierre (X)
+    const closeButton = document.createElement("button");
+    closeButton.classList.add("close-button");
+    closeButton.innerHTML = "&times;";
+    closeButton.addEventListener("click", () => {
+      document.body.removeChild(modalOverlay);
+    });
+
+    modalContainer.appendChild(closeButton);
+    modalContainer.appendChild(form);
+
+    // Agregar el contenedor del formulario al overlay
+    modalOverlay.appendChild(modalContainer);
+
+    // Agregar el overlay al body
+    document.body.appendChild(modalOverlay);
+  }
+
+  mostrarFormularioModificarEgreso(index) {
+    const finanzas = new Finanzas(1); // Reemplazar con el ID de usuario correcto
+    const egreso = finanzas.getEgresos()[index];
+
+    const formConfig = {
+      title: "Modificar Egreso",
+      fields: [
+        { type: "text", name: "descripcion", placeholder: "Descripción", label: "Descripción", value: egreso.descripcion },
+        { type: "number", name: "monto", placeholder: "Monto", label: "Monto", value: egreso.monto },
+        { type: "text", name: "categoria", placeholder: "Categoría", label: "Categoría", value: egreso.categoria },
+      ],
+      submitText: "Modificar",
+    };
+
+    const form = createForm(formConfig, (data) => {
+      finanzas.eliminarEgreso(index);
+      finanzas.setEgreso(data.descripcion, parseFloat(data.monto), data.categoria);
+      alertOk("Egreso Modificado", "El egreso ha sido modificado correctamente.");
+      document.body.removeChild(modalOverlay); // Eliminar el modal después de modificar
+      this.actualizarTablaEgresos(); // Actualizar la tabla de egresos
+    });
+
+    // Crear un overlay para el modal
+    const modalOverlay = document.createElement("div");
+    modalOverlay.classList.add("modal-overlay");
+
+    // Crear el contenedor del formulario
+    const modalContainer = document.createElement("div");
+    modalContainer.classList.add("modal-container");
+
+    // Crear botón de cierre (X)
+    const closeButton = document.createElement("button");
+    closeButton.classList.add("close-button");
+    closeButton.innerHTML = "&times;";
+    closeButton.addEventListener("click", () => {
+      document.body.removeChild(modalOverlay);
+    });
+
+    modalContainer.appendChild(closeButton);
+    modalContainer.appendChild(form);
+
+    // Agregar el contenedor del formulario al overlay
+    modalOverlay.appendChild(modalContainer);
+
+    // Agregar el overlay al body
+    document.body.appendChild(modalOverlay);
+  }
+
+  mostrarFormularioModificarMeta(index) {
+    const finanzas = new Finanzas(1); // Reemplazar con el ID de usuario correcto
+    const meta = finanzas.getMetas()[index];
+
+    const formConfig = {
+      title: "Modificar Meta",
+      fields: [
+        { type: "text", name: "descripcion", placeholder: "Descripción", label: "Descripción", value: meta.descripcion },
+        { type: "date", name: "fechaLimite", placeholder: "Fecha Límite", label: "Fecha Límite", value: meta.fechaLimite },
+        { type: "number", name: "valor", placeholder: "Valor", label: "Valor", value: meta.valor },
+      ],
+      submitText: "Modificar",
+    };
+
+    const form = createForm(formConfig, (data) => {
+      finanzas.eliminarMeta(index);
+      finanzas.setMeta(data.descripcion, data.fechaLimite, parseFloat(data.valor));
+      alertOk("Meta Modificada", "La meta ha sido modificada correctamente.");
+      document.body.removeChild(modalOverlay); // Eliminar el modal después de modificar
+      this.actualizarMetas(document.querySelector(".metas-container")); // Actualizar la vista de metas
+    });
+
+    // Crear un overlay para el modal
+    const modalOverlay = document.createElement("div");
+    modalOverlay.classList.add("modal-overlay");
+
+    // Crear el contenedor del formulario
+    const modalContainer = document.createElement("div");
+    modalContainer.classList.add("modal-container");
+
+    // Crear botón de cierre (X)
+    const closeButton = document.createElement("button");
+    closeButton.classList.add("close-button");
+    closeButton.innerHTML = "&times;";
+    closeButton.addEventListener("click", () => {
+      document.body.removeChild(modalOverlay);
+    });
+
+    modalContainer.appendChild(closeButton);
+    modalContainer.appendChild(form);
+
+    // Agregar el contenedor del formulario al overlay
+    modalOverlay.appendChild(modalContainer);
+
+    // Agregar el overlay al body
+    document.body.appendChild(modalOverlay);
   }
 
 }

@@ -99,6 +99,28 @@ export class Finanzas {
     this.saveData(); // Guardar después de actualizar
   }
 
+  // Eliminar un ingreso
+  eliminarIngreso(index) {
+    this.totalIngresos -= this.ingresos[this.#IdUser][index].monto;
+    this.ingresos[this.#IdUser].splice(index, 1);
+    this.actualizarBalance();
+    this.saveData(); // Guardar después de actualizar
+  }
+
+  // Eliminar un egreso
+  eliminarEgreso(index) {
+    this.totalEgresos -= this.egresos[this.#IdUser][index].monto;
+    this.egresos[this.#IdUser].splice(index, 1);
+    this.actualizarBalance();
+    this.saveData(); // Guardar después de actualizar
+  }
+
+  // Eliminar una meta
+  eliminarMeta(index) {
+    this.metas[this.#IdUser].splice(index, 1);
+    this.saveData(); // Guardar después de actualizar
+  }
+
   // Obtener las metas registradas
   getMetas() {
     return this.metas[this.#IdUser] || [];
