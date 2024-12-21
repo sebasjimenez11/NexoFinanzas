@@ -1,5 +1,5 @@
 import { User } from "../clases/User.js";
-import { alertOk, alertError, alertConfirm } from "./alerts.js";
+import { alertOk, alertError, alertConfirm, alertInfo } from "./alerts.js";
 import {
   getStorages,
   setStorages,
@@ -12,34 +12,46 @@ import { createHorizontalMenu, createSidebarMenu } from "./menus.js";
 import { mostrarDashboard } from "./dasboard.js";
 // const continerForm = document.getElementById("contenedor-login-register");
 const containerApp = document.getElementById("container-app");
-const app = new App();
 export function registroUser(data) {
+  const app = new App();
   const users = getStorages("usuarios") || {};
-  const user = new User();
+  const userEntry = Object.entries(users).find(
+    ([id, user]) => user.email === data.correo
+  );
 
-  // Crear una nueva instancia de User
+  if (!userEntry) {
+    const user = new User();
+    user.nuevoId();
+    // Crear una nueva instancia de User
 
-  // Asignar los valores del formulario al usuario
-  user.Nombre = data.nombre;
-  user.Apellido = data.apellido;
-  user.Email = data.correo;
-  user.Contrasena = data.password;
+    // Asignar los valores del formulario al usuario
+    user.Nombre = data.nombre;
+    user.Apellido = data.apellido;
+    user.Email = data.correo;
+    user.Contrasena = data.password;
 
-  // Obtener la información del usuario
-  const userInfo = user.getUserInfo(); // Este devuelve un objeto con el userId como clave
+    // Obtener la información del usuario
+    const userInfo = user.getUserInfo(); // Este devuelve un objeto con el userId como clave
 
-  // Guardar el usuario en el objeto de usuarios
-  users[user.Id] = userInfo[user.Id];
+    // Guardar el usuario en el objeto de usuarios
+    users[user.Id] = userInfo[user.Id];
 
-  // Actualizar el almacenamiento con el objeto de usuarios
-  setStorages("usuarios", users);
+    // Actualizar el almacenamiento con el objeto de usuarios
+    setStorages("usuarios", users);
 
-  // Mostrar mensaje de éxito
-  alertOk("Registro Exitoso", "Usuario registrado correctamente.");
-  salirFormulario();
+    // Mostrar mensaje de éxito
+    alertOk("Registro Exitoso", "Usuario registrado correctamente.");
+    salirFormulario();
+  } else {
+    alertInfo(
+      "Correo Electrónico En Uso",
+      "El correo electrónico ya se encuentra en uso."
+    );
+  }
 }
 
 export function iniciarSesion(data) {
+  const app = new App();
   const users = getStorages("usuarios") || {};
 
   // Iterar sobre las entradas [id, datos] del objeto `users`
@@ -71,6 +83,7 @@ export function iniciarSesion(data) {
 }
 
 export function mostrarRegistro() {
+  const app = new App();
   containerApp.innerHTML = "";
   const formConfig = {
     title: "Registro",
@@ -114,6 +127,7 @@ export function mostrarRegistro() {
 }
 
 export function mostrarInicioSesion() {
+  const app = new App();
   containerApp.innerHTML = "";
   const formConfig = {
     title: "Inicio de Sesión",
@@ -151,6 +165,7 @@ export function CerrarSesion() {
 }
 
 export function salirFormulario() {
+  const app = new App();
   containerApp.innerHTML = "";
   containerApp.appendChild(createHorizontalMenu());
   containerApp.appendChild(app.mostrarInicio());

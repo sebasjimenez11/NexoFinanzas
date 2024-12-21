@@ -2,26 +2,50 @@ import { salirFormulario } from "../funciones/usuario.js";
 import { createForm } from "../funciones/formulario.js";
 import { getStorages } from "../funciones/storages.js";
 import { Finanzas } from "./Finanzas.js";
-import { alertOk, alertConfirm, alertError, alertInfo, alertWarning } from "../funciones/alerts.js";
+import {
+  alertOk,
+  alertConfirm,
+  alertError,
+  alertInfo,
+  alertWarning,
+} from "../funciones/alerts.js";
 import { createSidebarMenu } from "../funciones/menus.js";
 
 export class App {
   #IdUser;
+  finanzas;
 
   constructor() {
     this.#IdUser = parseInt(getStorages("idUser"));
+    this.finanzas = new Finanzas(this.#IdUser);
   }
   mostrarInicio() {
     const div = document.createElement("div");
 
     div.innerHTML = `
         <div class="banner-principal">
-            <div class="text">
-                <h1>!Bienvenido¡</h1>
-                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Rerum, optio voluptatem nobis dignissimos incidunt consectetur similique ullam explicabo velit enim, ab deleniti quam cum magni, odit vitae ipsam. Laudantium, quos.</p>
-            </div>
-            <img src="./images/logo.png" alt="">
-        </div>
+    <div class="text">
+        <h1>¡Bienvenido a Nexo Finanzas!</h1>
+        <p>
+            <br>
+            Gestiona tus finanzas como nunca antes con nuestra innovadora plataforma.  
+            <br><br>
+            Con Nexo Finanzas, podrás:  
+            <ul>
+                <p>Organizar tus ingresos y gastos de manera sencilla.</p>
+                <p>Establecer y cumplir tus metas financieras.</p>
+                <p>Visualizar reportes claros y detallados para entender tus finanzas.</p>
+                <p>Tomar decisiones económicas más inteligentes y efectivas.</p>
+            </ul>  
+            <br>
+            Estamos aquí para ayudarte a alcanzar tus objetivos financieros y construir un futuro económico más estable.  
+            <br><br>
+            ¡Comienza tu camino hacia el éxito financiero con Nexo Finanzas hoy mismo!
+        </p>
+    </div>
+    <img src="./images/logo.png" alt="Logo de Nexo Finanzas">
+</div>
+
         `;
 
     return div;
@@ -29,27 +53,189 @@ export class App {
 
   mostrarDashboard() {
     const div = document.createElement("div");
+    div.classList.add("dashboard-container");
 
     div.innerHTML = `
-        <div class="dashboard">
-            <div class="card">
-                <img src="./images/icono-caja.png" alt="">
-                <h2>Caja</h2>
-                <p>$0</p>
-            </div>
-            <div class="card">
-                <img src="./images/icono-gasto.png" alt="">
-                <h2>Gasto</h2>
-                <p>$0</p>
-            </div>
-            <div class="card">
-                <img src="./images/icono-balance.png" alt="">
-                <h2>Balance</h2>
-                <p>$0</p>
-            </div>
-        </div>
-        `;
+    <div class="header">
+      <h1>Resumen Financiero</h1>
+      <button id="btn-abrirConsejos">Consejos Financieros</button>
+    </div>
+    <div class="graficos">
+      <div class="grafico-card">
+        <h2>Ingresos por Categoría</h2>
+        <canvas id="chart-ingresos-categorias"></canvas>
+      </div>
+      <div class="grafico-card">
+        <h2>Egresos por Categoría</h2>
+        <canvas id="chart-egresos-categorias"></canvas>
+      </div>
+      <div class="grafico-card">
+        <h2>Evolución de Ingresos y Egresos</h2>
+        <canvas id="chart-evolucion-ingresos-egresos"></canvas>
+      </div>
+      <div class="grafico-card">
+        <h2>Progreso de Metas</h2>
+        <canvas id="chart-progreso-metas"></canvas>
+      </div>
+      <div class="grafico-card">
+        <h2>Balance General</h2>
+        <canvas id="chart-balance-general"></canvas>
+      </div>
+      <div class="grafico-card">
+        <h2>Cumplimiento de Metas</h2>
+        <canvas id="chart-cumplimiento-metas"></canvas>
+      </div>
+    </div>
+  `;
+
     return div;
+  }
+
+  mostrarGraficos() {
+    // Gráfico 1: Distribución de ingresos por categoría
+    const ingresosPorCategoria = {};
+    this.finanzas.getIngresos().forEach((ingreso) => {
+      ingresosPorCategoria[ingreso.categoria] =
+        (ingresosPorCategoria[ingreso.categoria] || 0) + ingreso.monto;
+    });
+
+    new Chart(document.getElementById("chart-ingresos-categorias"), {
+      type: "pie",
+      data: {
+        labels: Object.keys(ingresosPorCategoria),
+        datasets: [
+          {
+            data: Object.values(ingresosPorCategoria),
+            backgroundColor: ["#4caf50", "#ff9800", "#2196f3", "#f44336"],
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: "top" } },
+      },
+    });
+
+    // Gráfico 2: Distribución de egresos por categoría
+    const egresosPorCategoria = {};
+    this.finanzas.getEgresos().forEach((egreso) => {
+      egresosPorCategoria[egreso.categoria] =
+        (egresosPorCategoria[egreso.categoria] || 0) + egreso.monto;
+    });
+
+    new Chart(document.getElementById("chart-egresos-categorias"), {
+      type: "pie",
+      data: {
+        labels: Object.keys(egresosPorCategoria),
+        datasets: [
+          {
+            data: Object.values(egresosPorCategoria),
+            backgroundColor: ["#f44336", "#03a9f4", "#ffc107", "#8bc34a"],
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: "top" } },
+      },
+    });
+
+    // Gráfico 3: Evolución de ingresos y egresos a lo largo del tiempo
+    const fechasIngresos = this.finanzas.getIngresos().map((i) => i.fecha);
+    const fechasEgresos = this.finanzas.getEgresos().map((e) => e.fecha);
+
+    new Chart(document.getElementById("chart-evolucion-ingresos-egresos"), {
+      type: "line",
+      data: {
+        labels: [...new Set([...fechasIngresos, ...fechasEgresos])],
+        datasets: [
+          {
+            label: "Ingresos",
+            data: this.finanzas.getIngresos().map((i) => i.monto),
+            borderColor: "#4caf50",
+            fill: false,
+          },
+          {
+            label: "Egresos",
+            data: this.finanzas.getEgresos().map((e) => e.monto),
+            borderColor: "#f44336",
+            fill: false,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: "top" } },
+      },
+    });
+
+    // Gráfico 4: Progreso de las metas establecidas
+    const metas = this.finanzas.getMetas();
+    const descripcionMetas = metas.map((m) => m.descripcion);
+    const progresoMetas = metas.map((m) => m.progreso);
+
+    new Chart(document.getElementById("chart-progreso-metas"), {
+      type: "bar",
+      data: {
+        labels: descripcionMetas,
+        datasets: [
+          {
+            label: "Progreso",
+            data: progresoMetas,
+            backgroundColor: "#2196f3",
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+      },
+    });
+
+    // Gráfico 5: Balance general (ingresos vs. egresos)
+    new Chart(document.getElementById("chart-balance-general"), {
+      type: "horizontalBar",
+      data: {
+        labels: ["Balance"],
+        datasets: [
+          {
+            label: "Ingresos",
+            data: [this.finanzas.totalIngresos],
+            backgroundColor: "#4caf50",
+          },
+          {
+            label: "Egresos",
+            data: [this.finanzas.totalEgresos],
+            backgroundColor: "#f44336",
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: "top" } },
+      },
+    });
+
+    // Gráfico 6: Porcentaje de cumplimiento de metas
+    const metasCumplidas = metas.filter((m) => m.progreso >= m.valor).length;
+    const metasTotales = metas.length;
+
+    new Chart(document.getElementById("chart-cumplimiento-metas"), {
+      type: "doughnut",
+      data: {
+        labels: ["Cumplidas", "Pendientes"],
+        datasets: [
+          {
+            data: [metasCumplidas, metasTotales - metasCumplidas],
+            backgroundColor: ["#4caf50", "#f44336"],
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: "top" } },
+      },
+    });
   }
 
   mostrarRegistroLogin(form) {
@@ -92,8 +278,22 @@ export class App {
           name: "descripcion",
           placeholder: "Descripción",
           label: "Descripción",
+          required: true,
         },
-        { type: "number", name: "monto", placeholder: "Monto", label: "Monto" },
+        {
+          type: "date",
+          name: "fecha",
+          placeholder: "Fecha Ingreso",
+          label: "Fecha Ingreso",
+          required: true,
+        },
+        {
+          type: "number",
+          name: "monto",
+          placeholder: "Monto",
+          label: "Monto",
+          required: true,
+        },
         {
           type: "select",
           name: "categoria",
@@ -106,17 +306,19 @@ export class App {
           ],
           placeholder: "Categoría",
           label: "Categoría",
+          required: true,
         },
       ],
       submitText: "Registrar",
     };
 
     const form = createForm(formConfig, (data) => {
-      const finanzas = new Finanzas(this.#IdUser); // Reemplazar con el ID de usuario correcto
+      const finanzas = this.finanzas; // Reemplazar con el ID de usuario correcto
       finanzas.setIngreso(
         data.descripcion,
         parseFloat(data.monto),
-        data.categoria
+        data.categoria,
+        data.fecha
       );
       alertOk(
         "Ingreso Registrado",
@@ -162,8 +364,22 @@ export class App {
           name: "descripcion",
           placeholder: "Descripción",
           label: "Descripción",
+          required: true,
         },
-        { type: "number", name: "monto", placeholder: "Monto", label: "Monto" },
+        {
+          type: "number",
+          name: "monto",
+          placeholder: "Monto",
+          label: "Monto",
+          required: true,
+        },
+        {
+          type: "date",
+          name: "fecha",
+          placeholder: "Fecha Egreso",
+          label: "Fecha Egreso",
+          required: true,
+        },
         {
           type: "select",
           name: "categoria",
@@ -180,17 +396,19 @@ export class App {
           ],
           placeholder: "Categoría",
           label: "Categoría",
+          required: true,
         },
       ],
       submitText: "Registrar",
     };
 
     const form = createForm(formConfig, (data) => {
-      const finanzas = new Finanzas(this.#IdUser); // Reemplazar con el ID de usuario correcto
+      const finanzas = this.finanzas; // Reemplazar con el ID de usuario correcto
       finanzas.setEgreso(
         data.descripcion,
         parseFloat(data.monto),
-        data.categoria
+        data.categoria,
+        data.fecha
       );
       alertOk(
         "Egreso Registrado",
@@ -236,12 +454,14 @@ export class App {
           name: "descripcion",
           placeholder: "Descripción",
           label: "Descripción",
+          required: true,
         },
         {
           type: "date",
           name: "fechaLimite",
           placeholder: "Fecha Límite",
           label: "Fecha Límite",
+          required: true,
         },
         {
           type: "select",
@@ -257,20 +477,21 @@ export class App {
             "Educación futura",
           ],
           label: "Objetivo",
+          required: true,
         },
         {
-          type: "select",
-          name: "prioridad",
-          options: ["Alta", "Baja", "Media"],
-          label: "Prioridad",
+          type: "number",
+          name: "valor",
+          placeholder: "Valor",
+          label: "Valor",
+          required: true,
         },
-        { type: "number", name: "valor", placeholder: "Valor", label: "Valor" },
       ],
       submitText: "Registrar",
     };
 
     const form = createForm(formConfig, (data) => {
-      const finanzas = new Finanzas(this.#IdUser); // Reemplazar con el ID de usuario correcto
+      const finanzas = this.finanzas; // Reemplazar con el ID de usuario correcto
       finanzas.setMeta(
         data.descripcion,
         data.fechaLimite,
@@ -336,7 +557,7 @@ export class App {
   }
 
   actualizarMetas(metasContainer) {
-    const finanzas = new Finanzas(this.#IdUser); // Reemplazar con el ID de usuario correcto
+    const finanzas = this.finanzas; // Reemplazar con el ID de usuario correcto
     const metas = finanzas.getMetas();
     const colors = [
       "#FFCDD2",
@@ -416,7 +637,7 @@ export class App {
     };
 
     const form = createForm(formConfig, (data) => {
-      const finanzas = new Finanzas(this.#IdUser); // Reemplazar con el ID de usuario correcto
+      const finanzas = this.finanzas; // Reemplazar con el ID de usuario correcto
       finanzas.addToMeta(index, parseFloat(data.monto));
       alertOk(
         "Progreso Actualizado",
@@ -481,6 +702,7 @@ export class App {
           <th>Descripción</th>
           <th>Monto</th>
           <th>Categoría</th>
+          <th>Fecha</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -494,10 +716,10 @@ export class App {
   }
 
   actualizarTablaIngresos() {
-    const finanzas = new Finanzas(this.#IdUser); // Reemplazar con el ID de usuario correcto
+    const finanzas = this.finanzas; // Reemplazar con el ID de usuario correcto
     const ingresos = finanzas.getIngresos();
     const tbody = document.getElementById("tabla-ingresos-body");
-    tbody.innerHTML = ""; // Limpiar contenido previo
+    tbody.innerHTML = "";
 
     ingresos.forEach((ingreso, index) => {
       const tr = document.createElement("tr");
@@ -505,6 +727,7 @@ export class App {
         <td>${ingreso.descripcion}</td>
         <td>${ingreso.monto}</td>
         <td>${ingreso.categoria}</td>
+        <td>${ingreso.fecha}</td>
         <td>
           <button class="btn-modificar" data-index="${index}">
             <i class="bi bi-pencil-square"></i>
@@ -540,7 +763,7 @@ export class App {
     });
   }
 
-mostrarTablaEgresos() {
+  mostrarTablaEgresos() {
     const tablaEgresos = document.createElement("div");
     tablaEgresos.classList.add("tabla-ingresos"); // Mismas clases que en la tabla de ingresos
 
@@ -580,20 +803,20 @@ mostrarTablaEgresos() {
     </table>
   `;
 
-  return tablaEgresos;
-}
+    return tablaEgresos;
+  }
 
-actualizarTablaEgresos() {
-  const finanzas = new Finanzas(this.#IdUser); // Reemplazar con el ID de usuario correcto
-  const egresos = finanzas.getEgresos(); // Obtener los egresos del usuario
-  const tbody = document.getElementById("tabla-ingresos-body"); // Usar el mismo ID para el tbody
-  tbody.innerHTML = ""; // Limpiar filas previas
+  actualizarTablaEgresos() {
+    const finanzas = this.finanzas; // Reemplazar con el ID de usuario correcto
+    const egresos = finanzas.getEgresos(); // Obtener los egresos del usuario
+    const tbody = document.getElementById("tabla-ingresos-body"); // Usar el mismo ID para el tbody
+    tbody.innerHTML = ""; // Limpiar filas previas
 
-  // Iterar por cada egreso y generar filas dinámicamente
-  egresos.forEach((egreso, index) => {
-    const tr = document.createElement("tr");
+    // Iterar por cada egreso y generar filas dinámicamente
+    egresos.forEach((egreso, index) => {
+      const tr = document.createElement("tr");
 
-    tr.innerHTML = `
+      tr.innerHTML = `
       <td>${egreso.descripcion}</td>
       <td>${egreso.monto}</td>
       <td>${egreso.categoria}</td>
@@ -608,20 +831,34 @@ actualizarTablaEgresos() {
       </td>
     `;
 
-    tbody.appendChild(tr);
-  });
-
-  // Asignar eventos a los botones de modificar y eliminar
-  tbody.querySelectorAll(".btn-modificar-ingreso").forEach((button) => {
-    button.addEventListener("click", (e) => {
-      const index = e.currentTarget.getAttribute("data-index");
-      this.mostrarFormularioModificarEgreso(index);
+      tbody.appendChild(tr);
     });
-  });
-}
+
+    // Asignar eventos a los botones de modificar y eliminar
+    tbody.querySelectorAll(".btn-modificar").forEach((button) => {
+      button.addEventListener("click", (e) => {
+        const index = e.currentTarget.getAttribute("data-index");
+        this.mostrarFormularioModificarEgreso(index);
+      });
+    });
+
+    tbody.querySelectorAll(".btn-eliminar").forEach((button) => {
+      button.addEventListener("click", (e) => {
+        const index = e.currentTarget.getAttribute("data-index");
+        alertConfirm(
+          "Eliminar Egreso",
+          "¿Estás seguro de eliminar este egreso?",
+          () => {
+            finanzas.eliminarEgreso(index);
+            this.actualizarTablaEgresos();
+          }
+        );
+      });
+    });
+  }
 
   mostrarFormularioModificarIngreso(index) {
-    const finanzas = new Finanzas(this.#IdUser); // Reemplazar con el ID de usuario correcto
+    const finanzas = this.finanzas; // Reemplazar con el ID de usuario correcto
     const ingreso = finanzas.getIngresos()[parseInt(index)];
     console.log(ingreso);
 
@@ -634,6 +871,13 @@ actualizarTablaEgresos() {
           placeholder: "Descripción",
           label: "Descripción",
           value: ingreso.descripcion,
+        },
+        {
+          type: "date",
+          name: "fecha",
+          placeholder: "Fecha Ingreso",
+          label: "Fecha Ingreso",
+          required: true,
         },
         {
           type: "number",
@@ -655,10 +899,12 @@ actualizarTablaEgresos() {
 
     const form = createForm(formConfig, (data) => {
       finanzas.eliminarIngreso(this.#IdUser);
-      finanzas.setIngreso(
+      finanzas.updateIngreso(
+        parseInt(index),
         data.descripcion,
         parseFloat(data.monto),
-        data.categoria
+        data.categoria,
+        data.fecha
       );
       alertOk(
         "Ingreso Modificado",
@@ -695,7 +941,7 @@ actualizarTablaEgresos() {
   }
 
   mostrarFormularioModificarEgreso(index) {
-    const finanzas = new Finanzas(this.#IdUser); // Reemplazar con el ID de usuario correcto
+    const finanzas = this.finanzas; // Reemplazar con el ID de usuario correcto
     const egreso = finanzas.getEgresos()[index];
 
     const formConfig = {
@@ -709,6 +955,14 @@ actualizarTablaEgresos() {
           value: egreso.descripcion,
         },
         {
+          type: "date",
+          name: "fecha",
+          placeholder: "Fecha Egreso",
+          label: "Fecha Egreso",
+          required: true,
+          value: egreso.fecha,
+        },
+        {
           type: "number",
           name: "monto",
           placeholder: "Monto",
@@ -716,10 +970,22 @@ actualizarTablaEgresos() {
           value: egreso.monto,
         },
         {
-          type: "text",
+          type: "select",
           name: "categoria",
+          options: [
+            "Alquiler/Hipoteca",
+            "Servicios",
+            "Alimentación",
+            "Transporte",
+            "Educación",
+            "Salud",
+            "Entretenimiento",
+            "Ropa y accesorios",
+            "Otros egresos",
+          ],
           placeholder: "Categoría",
           label: "Categoría",
+          required: true,
           value: egreso.categoria,
         },
       ],
@@ -728,10 +994,12 @@ actualizarTablaEgresos() {
 
     const form = createForm(formConfig, (data) => {
       finanzas.eliminarEgreso(index);
-      finanzas.setEgreso(
+      finanzas.updateEgreso(
+        parseInt(index),
         data.descripcion,
         parseFloat(data.monto),
-        data.categoria
+        data.categoria,
+        data.fecha
       );
       alertOk(
         "Egreso Modificado",
@@ -768,7 +1036,7 @@ actualizarTablaEgresos() {
   }
 
   mostrarFormularioModificarMeta(index) {
-    const finanzas = new Finanzas(this.#IdUser); // Reemplazar con el ID de usuario correcto
+    const finanzas = this.finanzas; // Reemplazar con el ID de usuario correcto
     const meta = finanzas.getMetas()[index];
 
     const formConfig = {
@@ -801,7 +1069,8 @@ actualizarTablaEgresos() {
 
     const form = createForm(formConfig, (data) => {
       finanzas.eliminarMeta(index);
-      finanzas.setMeta(
+      finanzas.updateMeta(
+        parseInt(index),
         data.descripcion,
         data.fechaLimite,
         parseFloat(data.valor)

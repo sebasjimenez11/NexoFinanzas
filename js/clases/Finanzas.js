@@ -1,5 +1,11 @@
 import { getStorages, setStorages } from "../funciones/storages.js";
-import { alertError, alertConfirm, alertOk, alertWarning, alertInfo } from "../funciones/alerts.js";
+import {
+  alertError,
+  alertConfirm,
+  alertOk,
+  alertWarning,
+  alertInfo,
+} from "../funciones/alerts.js";
 
 export class Finanzas {
   #IdUser;
@@ -62,35 +68,47 @@ export class Finanzas {
   }
 
   // Registrar un ingreso
-  setIngreso(descripcion, monto, categoria) {
+  setIngreso(descripcion, monto, categoria, fecha) {
     if (isNaN(monto) || monto <= 0) {
-      alertError("Monto Invalido.", "Ingrese un Monto numérico mayor que cero.");
+      alertError(
+        "Monto Invalido.",
+        "Ingrese un Monto numérico mayor que cero."
+      );
       return;
     }
     this.ingresos[this.#IdUser] = this.ingresos[this.#IdUser] || [];
-    this.ingresos[this.#IdUser].push({ descripcion, monto, categoria });
+    this.ingresos[this.#IdUser].push({ descripcion, monto, categoria, fecha });
     this.totalIngresos += monto;
     this.actualizarBalance();
     this.saveData(); // Guardar después de actualizar
   }
 
   // Registrar un egreso
-  setEgreso(descripcion, monto, categoria) {
+  setEgreso(descripcion, monto, categoria, fecha) {
     if (isNaN(monto) || monto <= 0) {
-      alertError("Monto Invalido.", "Ingrese un Monto numérico mayor que cero.");
+      alertError(
+        "Monto Invalido.",
+        "Ingrese un Monto numérico mayor que cero."
+      );
       return;
     }
     this.egresos[this.#IdUser] = this.egresos[this.#IdUser] || [];
-    this.egresos[this.#IdUser].push({ descripcion, monto, categoria });
+    this.egresos[this.#IdUser].push({ descripcion, monto, categoria, fecha });
     this.totalEgresos += monto;
     this.actualizarBalance();
     this.saveData(); // Guardar después de actualizar
   }
 
   // Registrar una meta
-  setMeta(descripcion, fechaLimite, valor) {
+  setMeta(descripcion, fechaLimite, valor, objetivo) {
     this.metas[this.#IdUser] = this.metas[this.#IdUser] || [];
-    this.metas[this.#IdUser].push({ descripcion, fechaLimite, valor, progreso: 0 });
+    this.metas[this.#IdUser].push({
+      descripcion,
+      fechaLimite,
+      valor,
+      objetivo,
+      progreso: 0,
+    });
     this.saveData(); // Guardar después de actualizar
   }
 
@@ -102,12 +120,12 @@ export class Finanzas {
 
   // Eliminar un ingreso
   eliminarIngreso(index) {
-    console.log('ingresos ',this.ingresos[this.#IdUser][0]);
-    
-    console.log('total ',this.totalIngresos);
-    this.totalIngresos -= this.ingresos[this.#IdUser][0].monto;    
+    console.log("ingresos ", this.ingresos[this.#IdUser][0]);
+
+    console.log("total ", this.totalIngresos);
+    this.totalIngresos -= this.ingresos[this.#IdUser][0].monto;
     this.ingresos[this.#IdUser].splice(index, 1);
-    console.log('ingresos depsues',this.ingresos[this.#IdUser][0]);
+    console.log("ingresos depsues", this.ingresos[this.#IdUser][0]);
     this.actualizarBalance();
     this.saveData(); // Guardar después de actualizar
   }
@@ -153,8 +171,81 @@ export class Finanzas {
       egresos: this.totalEgresos,
       balance: this.totalBalance,
       metasCumplidas: this.metas[this.#IdUser]?.filter((meta) => meta.cumplida),
-      metasEnProceso: this.metas[this.#IdUser]?.filter((meta) => meta.fechaLimite),
+      metasEnProceso: this.metas[this.#IdUser]?.filter(
+        (meta) => meta.fechaLimite
+      ),
     };
+  }
+
+  // Actualizar una meta existente
+  updateMeta(index, descripcion, fechaLimite, valor, progreso) {
+    if (!this.metas[this.#IdUser] || !this.metas[this.#IdUser][index]) {
+      alertError(
+        "Meta no encontrada.",
+        "No se pudo actualizar la meta especificada."
+      );
+      return;
+    }
+
+    this.metas[this.#IdUser][index] = {
+      descripcion: descripcion || this.metas[this.#IdUser][index].descripcion,
+      fechaLimite: fechaLimite || this.metas[this.#IdUser][index].fechaLimite,
+      valor: valor || this.metas[this.#IdUser][index].valor,
+      progreso: progreso || this.metas[this.#IdUser][index].progreso,
+    };
+
+    this.saveData();
+  }
+
+  // Actualizar un ingreso existente
+  updateIngreso(index, descripcion, monto, categoria, fecha) {
+    if (!this.ingresos[this.#IdUser] || !this.ingresos[this.#IdUser][index]) {
+      alertError(
+        "Ingreso no encontrado.",
+        "No se pudo actualizar el ingreso especificado."
+      );
+      return;
+    }
+
+    // Actualizar totales restando el monto anterior y sumando el nuevo
+    this.totalIngresos -= this.ingresos[this.#IdUser][index].monto;
+    this.totalIngresos += monto || this.ingresos[this.#IdUser][index].monto;
+
+    this.ingresos[this.#IdUser][index] = {
+      descripcion:
+        descripcion || this.ingresos[this.#IdUser][index].descripcion,
+      monto: monto || this.ingresos[this.#IdUser][index].monto,
+      categoria: categoria || this.ingresos[this.#IdUser][index].categoria,
+      fecha: fecha || this.ingresos[this.#IdUser][index].fecha,
+    };
+
+    this.actualizarBalance(); // Actualizar balance
+    this.saveData(); // Guardar cambios
+  }
+
+  // Actualizar un egreso existente
+  updateEgreso(index, descripcion, monto, categoria, fecha) {
+    if (!this.egresos[this.#IdUser] || !this.egresos[this.#IdUser][index]) {
+      alertError(
+        "Egreso no encontrado.",
+        "No se pudo actualizar el egreso especificado."
+      );
+      return;
+    }
+
+    // Actualizar totales restando el monto anterior y sumando el nuevo
+    this.totalEgresos -= this.egresos[this.#IdUser][index].monto;
+    this.totalEgresos += monto || this.egresos[this.#IdUser][index].monto;
+
+    this.egresos[this.#IdUser][index] = {
+      descripcion: descripcion || this.egresos[this.#IdUser][index].descripcion,
+      monto: monto || this.egresos[this.#IdUser][index].monto,
+      categoria: categoria || this.egresos[this.#IdUser][index].categoria,
+      fecha: fecha || this.egresos[this.#IdUser][index].fecha,
+    };
+
+    this.actualizarBalance(); // Actualizar balance
+    this.saveData(); // Guardar cambios
   }
 
   // Guardar y obtener todos los datos de finanzas
@@ -178,4 +269,3 @@ export class Finanzas {
     return instance;
   }
 }
-

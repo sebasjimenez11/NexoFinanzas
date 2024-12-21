@@ -9,14 +9,15 @@ import {
 import { createHorizontalMenu, createSidebarMenu } from "./funciones/menus.js";
 import { getStorages, removeStorages } from "./funciones/storages.js";
 import { App } from "./clases/App.js";
+import { mostrarDashboard } from "./funciones/dasboard.js";
 
 const containerApp = document.getElementById("container-app");
+
 const app = new App();
 
 document.addEventListener("DOMContentLoaded", () => {
   if (getStorages("idUser")) {
-    containerApp.innerHTML = "";
-    containerApp.appendChild(createSidebarMenu());
+    mostrarDashboard();
   } else {
     containerApp.innerHTML = "";
     containerApp.appendChild(createHorizontalMenu());
