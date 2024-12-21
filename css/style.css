@@ -457,10 +457,28 @@ body {
   border-radius: 15px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6); /* Sombra pronunciada */
   width: 90%;
-  max-width: 500px;
+  max-width: 500px; /* Limita el ancho máximo */
+  max-height: 80vh; /* Limita la altura máxima al 80% de la altura de la ventana */
+  overflow-y: auto; /* Agrega scroll vertical si el contenido excede la altura máxima */
   color: var(--text-color);
   position: relative;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Personalización de las barras de scroll */
+.modal-container::-webkit-scrollbar {
+  width: 8px; /* Ancho de la barra de desplazamiento */
+}
+
+.modal-container::-webkit-scrollbar-thumb {
+  background-color: #007bff; /* Color del pulgar de la barra de desplazamiento */
+  border-radius: 10px; /* Bordes redondeados en el pulgar */
+  border: 2px solid #0056b3; /* Color del borde del pulgar */
+}
+
+.modal-container::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0.2); /* Color de la pista de la barra de desplazamiento */
+  border-radius: 10px; /* Bordes redondeados en la pista */
 }
 
 .modal-container:hover {

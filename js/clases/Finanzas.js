@@ -262,6 +262,134 @@ export class Finanzas {
     };
   }
 
+  // Generar prompt detallado para análisis financiero con IA
+  generarPromptDetalladoIA() {
+    const ingresos = this.ingresos[this.#IdUser] || [];
+    const egresos = this.egresos[this.#IdUser] || [];
+    const metas = this.metas[this.#IdUser] || [];
+
+    const categoriasIngresos = ingresos.reduce((acc, ingreso) => {
+      acc[ingreso.categoria] = (acc[ingreso.categoria] || 0) + ingreso.monto;
+      return acc;
+    }, {});
+
+    const categoriasEgresos = egresos.reduce((acc, egreso) => {
+      acc[egreso.categoria] = (acc[egreso.categoria] || 0) + egreso.monto;
+      return acc;
+    }, {});
+
+    const resumenIngresos = ingresos
+      .map(
+        (ingreso, index) =>
+          `${index + 1}. Descripción: ${ingreso.descripcion}, Monto: ${
+            ingreso.monto
+          }, Categoría: ${ingreso.categoria}, Fecha: ${ingreso.fecha}`
+      )
+      .join("\n");
+    const resumenEgresos = egresos
+      .map(
+        (egreso, index) =>
+          `${index + 1}. Descripción: ${egreso.descripcion}, Monto: ${
+            egreso.monto
+          }, Categoría: ${egreso.categoria}, Fecha: ${egreso.fecha}`
+      )
+      .join("\n");
+    const resumenMetas = metas
+      .map(
+        (meta, index) =>
+          `${index + 1}. Descripción: ${meta.descripcion}, Valor: ${
+            meta.valor
+          }, Fecha Límite: ${meta.fechaLimite}, Progreso: ${meta.progreso} de ${
+            meta.valor
+          } (${((meta.progreso / meta.valor) * 100).toFixed(2) || 0}%)`
+      )
+      .join("\n");
+
+    const resumenCategoriasIngresos = Object.entries(categoriasIngresos)
+      .map(([categoria, total]) => `- ${categoria}: ${total}`)
+      .join("\n");
+    const resumenCategoriasEgresos = Object.entries(categoriasEgresos)
+      .map(([categoria, total]) => `- ${categoria}: ${total}`)
+      .join("\n");
+
+    const prompt = `
+Usa los siguientes datos financieros del usuario para generar un informe detallado en formato JSON. Asegúrate de incluir los campos principales que permitan un análisis estructurado.
+
+### Datos Financieros:
+{
+  "resumenGeneral": {
+    "totalIngresos": ${this.totalIngresos},
+    "totalEgresos": ${this.totalEgresos},
+    "balanceActual": ${this.totalBalance}
+  },
+  "ingresos": [
+    ${ingresos
+      .map(
+        (ingreso) => `{
+        "descripcion": "${ingreso.descripcion}",
+        "monto": ${ingreso.monto},
+        "categoria": "${ingreso.categoria}",
+        "fecha": "${ingreso.fecha}"
+      }`
+      )
+      .join(",")}
+  ],
+  "egresos": [
+    ${egresos
+      .map(
+        (egreso) => `{
+        "descripcion": "${egreso.descripcion}",
+        "monto": ${egreso.monto},
+        "categoria": "${egreso.categoria}",
+        "fecha": "${egreso.fecha}"
+      }`
+      )
+      .join(",")}
+  ],
+  "metas": [
+    ${metas
+      .map(
+        (meta) => `{
+        "descripcion": "${meta.descripcion}",
+        "valor": ${meta.valor},
+        "fechaLimite": "${meta.fechaLimite}",
+        "progreso": ${meta.progreso},
+        "porcentajeProgreso": ${
+          ((meta.progreso / meta.valor) * 100).toFixed(2) || 0
+        }
+      }`
+      )
+      .join(",")}
+  ],
+  "categorias": {
+    "ingresosPorCategoria": {
+      ${Object.entries(categoriasIngresos)
+        .map(([categoria, total]) => `"${categoria}": ${total}`)
+        .join(",")}
+    },
+    "egresosPorCategoria": {
+      ${Object.entries(categoriasEgresos)
+        .map(([categoria, total]) => `"${categoria}": ${total}`)
+        .join(",")}
+    }
+  }
+}
+
+### Objetivo del Informe:
+1. Proporcionar observaciones detalladas sobre patrones de ingresos y egresos.
+2. Generar consejos prácticos para optimizar el balance.
+3. Evaluar metas y sugerir estrategias para lograrlas.
+4. Estructurar el informe para ser utilizado en un sistema que analiza automáticamente los datos.
+
+Por favor, devuelve el análisis en el siguiente formato JSON, incluyendo:
+- "observaciones": un resumen de hallazgos importantes.
+- "recomendaciones": consejos prácticos para mejorar.
+- "estrategias": acciones a corto y largo plazo para optimizar la estabilidad financiera.
+    `.trim();
+
+    return prompt;
+  }
+
   // Método estático para crear una nueva instancia desde localStorage
   static cargarFinanzas(idUser) {
     const instance = new Finanzas(idUser);

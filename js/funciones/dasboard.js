@@ -1,5 +1,8 @@
 import { App } from "../clases/App.js";
+import { Finanzas } from "../clases/Finanzas.js";
+import { GeminiAPI } from "../clases/GeminiAi.js";
 import { createSidebarMenu } from "./menus.js";
+import { getStorages } from "./storages.js";
 
 const contenedorAPP = document.getElementById("container-app");
 
@@ -25,7 +28,17 @@ function mostrarDashboard() {
   contenedorAPP.appendChild(createSidebarMenu());
   dashboard.appendChild(app.mostrarDashboard());
   contenedorAPP.appendChild(dashboard);
-  app.mostrarGraficos();
+  document
+    .getElementById("btn-abrirConsejos")
+    .addEventListener("click", async () => {
+      const gemini = new GeminiAPI("AIzaSyDaVUbjR5cAjs_YkAfG8OD8uXfYX5a77y0");
+      const finanzas = new Finanzas(parseInt(getStorages('idUser')));
+
+      const prompt = finanzas.generarPromptDetalladoIA();
+
+      await gemini.generarInformeFinanciero(prompt);
+    });
+    app.mostrarGraficos();
 }
 
 function mostrarEgresos() {
