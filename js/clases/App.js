@@ -2,10 +2,15 @@ import { salirFormulario } from "../funciones/usuario.js";
 import { createForm } from "../funciones/formulario.js";
 import { getStorages } from "../funciones/storages.js";
 import { Finanzas } from "./Finanzas.js";
-import { alertOk, alertConfirm } from "../funciones/alerts.js";
+import { alertOk, alertConfirm, alertError, alertInfo, alertWarning } from "../funciones/alerts.js";
 import { createSidebarMenu } from "../funciones/menus.js";
 
 export class App {
+  #IdUser;
+
+  constructor() {
+    this.#IdUser = parseInt(getStorages("idUser"));
+  }
   mostrarInicio() {
     const div = document.createElement("div");
 
@@ -78,28 +83,45 @@ export class App {
 
   //mostrar formulario de ingresos
   mostrarRegistroIngresos() {
+    console.log("Abriendo modal...");
     const formConfig = {
       title: "Registrar Ingreso",
       fields: [
-        { type: "text", name: "descripcion", placeholder: "Descripción", label: "Descripción" },
+        {
+          type: "text",
+          name: "descripcion",
+          placeholder: "Descripción",
+          label: "Descripción",
+        },
         { type: "number", name: "monto", placeholder: "Monto", label: "Monto" },
         {
-          type: "select", name: "categoria", options: [
+          type: "select",
+          name: "categoria",
+          options: [
             "Salario",
             "Freelance",
             "Rentas",
             "Inversiones",
-            "Otros ingresos"
-          ], placeholder: "Categoría", label: "Categoría"
+            "Otros ingresos",
+          ],
+          placeholder: "Categoría",
+          label: "Categoría",
         },
       ],
       submitText: "Registrar",
     };
 
     const form = createForm(formConfig, (data) => {
-      const finanzas = new Finanzas(1); // Reemplazar con el ID de usuario correcto
-      finanzas.setIngreso(data.descripcion, parseFloat(data.monto), data.categoria);
-      alertOk("Ingreso Registrado", "El ingreso ha sido registrado correctamente.");
+      const finanzas = new Finanzas(this.#IdUser); // Reemplazar con el ID de usuario correcto
+      finanzas.setIngreso(
+        data.descripcion,
+        parseFloat(data.monto),
+        data.categoria
+      );
+      alertOk(
+        "Ingreso Registrado",
+        "El ingreso ha sido registrado correctamente."
+      );
       document.body.removeChild(modalOverlay); // Eliminar el modal después de registrar
       this.actualizarTablaIngresos(); // Actualizar la tabla de ingresos
     });
@@ -135,10 +157,17 @@ export class App {
     const formConfig = {
       title: "Registrar Egreso",
       fields: [
-        { type: "text", name: "descripcion", placeholder: "Descripción", label: "Descripción" },
+        {
+          type: "text",
+          name: "descripcion",
+          placeholder: "Descripción",
+          label: "Descripción",
+        },
         { type: "number", name: "monto", placeholder: "Monto", label: "Monto" },
         {
-          type: "select", name: "categoria", options: [
+          type: "select",
+          name: "categoria",
+          options: [
             "Alquiler/Hipoteca",
             "Servicios",
             "Alimentación",
@@ -147,17 +176,26 @@ export class App {
             "Salud",
             "Entretenimiento",
             "Ropa y accesorios",
-            "Otros egresos"
-          ], placeholder: "Categoría", label: "Categoría"
+            "Otros egresos",
+          ],
+          placeholder: "Categoría",
+          label: "Categoría",
         },
       ],
       submitText: "Registrar",
     };
 
     const form = createForm(formConfig, (data) => {
-      const finanzas = new Finanzas(1); // Reemplazar con el ID de usuario correcto
-      finanzas.setEgreso(data.descripcion, parseFloat(data.monto), data.categoria);
-      alertOk("Egreso Registrado", "El egreso ha sido registrado correctamente.");
+      const finanzas = new Finanzas(this.#IdUser); // Reemplazar con el ID de usuario correcto
+      finanzas.setEgreso(
+        data.descripcion,
+        parseFloat(data.monto),
+        data.categoria
+      );
+      alertOk(
+        "Egreso Registrado",
+        "El egreso ha sido registrado correctamente."
+      );
       document.body.removeChild(modalOverlay); // Eliminar el modal después de registrar
       this.actualizarTablaEgresos(); // Actualizar la tabla de egresos
     });
@@ -193,28 +231,51 @@ export class App {
     const formConfig = {
       title: "Registrar Meta Financiera",
       fields: [
-        { type: "text", name: "descripcion", placeholder: "Descripción", label: "Descripción" },
-        { type: "date", name: "fechaLimite", placeholder: "Fecha Límite", label: "Fecha Límite" },
         {
-          type: "select", name: "objetivo", options: [
-            'seleccionar Opción',
+          type: "text",
+          name: "descripcion",
+          placeholder: "Descripción",
+          label: "Descripción",
+        },
+        {
+          type: "date",
+          name: "fechaLimite",
+          placeholder: "Fecha Límite",
+          label: "Fecha Límite",
+        },
+        {
+          type: "select",
+          name: "objetivo",
+          options: [
+            "seleccionar Opción",
             "Ahorro",
             "Viajes",
             "Compra de vivienda",
             "Pago de deudas",
             "Fondo de emergencia",
             "Inversión en negocios",
-            "Educación futura"
-          ], label: "Objetivo"},
-        {type: 'select', name: "prioridad", options: ['Alta', 'Baja', 'Media'] ,label : 'Prioridad'}, 
+            "Educación futura",
+          ],
+          label: "Objetivo",
+        },
+        {
+          type: "select",
+          name: "prioridad",
+          options: ["Alta", "Baja", "Media"],
+          label: "Prioridad",
+        },
         { type: "number", name: "valor", placeholder: "Valor", label: "Valor" },
       ],
       submitText: "Registrar",
     };
 
     const form = createForm(formConfig, (data) => {
-      const finanzas = new Finanzas(1); // Reemplazar con el ID de usuario correcto
-      finanzas.setMeta(data.descripcion, data.fechaLimite, parseFloat(data.valor));
+      const finanzas = new Finanzas(this.#IdUser); // Reemplazar con el ID de usuario correcto
+      finanzas.setMeta(
+        data.descripcion,
+        data.fechaLimite,
+        parseFloat(data.valor)
+      );
       alertOk("Meta Registrada", "La meta ha sido registrada correctamente.");
       document.body.removeChild(modalOverlay); // Eliminar el modal después de registrar
       this.mostrarMetas(); // Actualizar la vista de metas
@@ -275,13 +336,24 @@ export class App {
   }
 
   actualizarMetas(metasContainer) {
-    const finanzas = new Finanzas(1); // Reemplazar con el ID de usuario correcto
+    const finanzas = new Finanzas(this.#IdUser); // Reemplazar con el ID de usuario correcto
     const metas = finanzas.getMetas();
-    const colors = ["#FFCDD2", "#F8BBD0", "#E1BEE7", "#D1C4E9", "#C5CAE9", "#BBDEFB", "#B3E5FC", "#B2EBF2", "#B2DFDB", "#C8E6C9"];
+    const colors = [
+      "#FFCDD2",
+      "#F8BBD0",
+      "#E1BEE7",
+      "#D1C4E9",
+      "#C5CAE9",
+      "#BBDEFB",
+      "#B3E5FC",
+      "#B2EBF2",
+      "#B2DFDB",
+      "#C8E6C9",
+    ];
 
     // Limpiar solo las metas del contenedor antes de volver a renderizar
     const existingElements = metasContainer.querySelectorAll(".meta");
-    existingElements.forEach(element => element.remove());
+    existingElements.forEach((element) => element.remove());
 
     metas.forEach((meta, index) => {
       const metaDiv = document.createElement("div");
@@ -322,10 +394,14 @@ export class App {
       button.addEventListener("click", (e) => {
         e.stopPropagation(); // Prevenir el evento de selección de meta
         const index = e.currentTarget.getAttribute("data-index");
-        alertConfirm("Eliminar Meta", "¿Estás seguro de eliminar esta meta?", () => {
-          finanzas.eliminarMeta(index);
-          this.actualizarMetas(metasContainer);
-        });
+        alertConfirm(
+          "Eliminar Meta",
+          "¿Estás seguro de eliminar esta meta?",
+          () => {
+            finanzas.eliminarMeta(index);
+            this.actualizarMetas(metasContainer);
+          }
+        );
       });
     });
   }
@@ -340,9 +416,12 @@ export class App {
     };
 
     const form = createForm(formConfig, (data) => {
-      const finanzas = new Finanzas(1); // Reemplazar con el ID de usuario correcto
+      const finanzas = new Finanzas(this.#IdUser); // Reemplazar con el ID de usuario correcto
       finanzas.addToMeta(index, parseFloat(data.monto));
-      alertOk("Progreso Actualizado", "El progreso de la meta ha sido actualizado correctamente.");
+      alertOk(
+        "Progreso Actualizado",
+        "El progreso de la meta ha sido actualizado correctamente."
+      );
       document.body.removeChild(modalOverlay); // Eliminar el modal después de registrar
       this.mostrarMetas(); // Actualizar la vista de metas
     });
@@ -375,46 +454,47 @@ export class App {
 
   // mostrar tabla registro de ingresos
   mostrarTablaIngresos() {
-    const containerApp = document.getElementById("container-app");
-    containerApp.innerHTML = ""; // Limpiar contenido previo
-    containerApp.appendChild(createSidebarMenu()); // Asegurar que el menú lateral se mantenga visible
     const tablaIngresos = document.createElement("div");
     tablaIngresos.classList.add("tabla-ingresos");
 
-    // Aquí puedes agregar el contenido de la tabla
-    tablaIngresos.innerHTML = `
-      <table>
-        <thead>
-          <tr>
-            <th>Descripción</th>
-            <th>Monto</th>
-            <th>Categoría</th>
-          </tr>
-        </thead>
-        <tbody id="tabla-ingresos-body">
-          <!-- Aquí se agregarán las filas de ingresos -->
-        </tbody>
-      </table>
-    `;
+    // Crear contenedor para el título y el botón
+    const encabezado = document.createElement("div");
+    encabezado.classList.add("tabla-ingresos-encabezado");
+    encabezado.innerHTML = `
+    <h2 class="tabla-ingresos-titulo">Ingresos del Balance</h2>
+  `;
 
     // Crear botón "+"
     const botonAgregar = document.createElement("button");
     botonAgregar.classList.add("btn-agregar");
+    botonAgregar.id = "btn-agregar-ingreso";
     botonAgregar.textContent = "+";
 
-    // Agregar evento click al botón "+"
-    botonAgregar.addEventListener("click", () => {
-      this.mostrarRegistroIngresos();
-    });
+    encabezado.appendChild(botonAgregar);
+    tablaIngresos.appendChild(encabezado);
 
-    tablaIngresos.appendChild(botonAgregar);
-    containerApp.appendChild(tablaIngresos);
+    // Crear tabla
+    tablaIngresos.innerHTML += `
+    <table>
+      <thead>
+        <tr>
+          <th>Descripción</th>
+          <th>Monto</th>
+          <th>Categoría</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-ingresos-body">
+        <!-- Aquí se agregarán las filas de ingresos -->
+      </tbody>
+    </table>
+  `;
 
-    this.actualizarTablaIngresos(); // Llamar a la función para llenar la tabla inicialmente
+    return tablaIngresos;
   }
 
   actualizarTablaIngresos() {
-    const finanzas = new Finanzas(1); // Reemplazar con el ID de usuario correcto
+    const finanzas = new Finanzas(this.#IdUser); // Reemplazar con el ID de usuario correcto
     const ingresos = finanzas.getIngresos();
     const tbody = document.getElementById("tabla-ingresos-body");
     tbody.innerHTML = ""; // Limpiar contenido previo
@@ -448,114 +528,142 @@ export class App {
     tbody.querySelectorAll(".btn-eliminar").forEach((button) => {
       button.addEventListener("click", (e) => {
         const index = e.currentTarget.getAttribute("data-index");
-        alertConfirm("Eliminar Ingreso", "¿Estás seguro de eliminar este ingreso?", () => {
-          finanzas.eliminarIngreso(index);
-          this.actualizarTablaIngresos();
-        });
+        alertConfirm(
+          "Eliminar Ingreso",
+          "¿Estás seguro de eliminar este ingreso?",
+          () => {
+            finanzas.eliminarIngreso(index);
+            this.actualizarTablaIngresos();
+          }
+        );
       });
     });
   }
 
-  mostrarTablaEgresos() {
-    const containerApp = document.getElementById("container-app");
-    containerApp.innerHTML = ""; // Limpiar contenido previo
-    containerApp.appendChild(createSidebarMenu()); // Asegurar que el menú lateral se mantenga visible
+mostrarTablaEgresos() {
     const tablaEgresos = document.createElement("div");
-    tablaEgresos.classList.add("tabla-egresos");
+    tablaEgresos.classList.add("tabla-ingresos"); // Mismas clases que en la tabla de ingresos
 
-    // Aquí puedes agregar el contenido de la tabla
-    tablaEgresos.innerHTML = `
-      <table>
-        <thead>
-          <tr>
-            <th>Descripción</th>
-            <th>Monto</th>
-            <th>Categoría</th>
-          </tr>
-        </thead>
-        <tbody id="tabla-egresos-body">
-          <!-- Aquí se agregarán las filas de egresos -->
-        </tbody>
-      </table>
-    `;
+    // Contenedor para el título y el botón
+    const encabezado = document.createElement("div");
+    encabezado.classList.add("tabla-ingresos-encabezado");
+    encabezado.innerHTML = `
+    <h2 class="tabla-ingresos-titulo">Ingresos del Balance</h2>
+  `;
 
     // Crear botón "+"
     const botonAgregar = document.createElement("button");
     botonAgregar.classList.add("btn-agregar");
+    botonAgregar.id = "btn-agregar-egreso";
     botonAgregar.textContent = "+";
 
-    // Agregar evento click al botón "+"
-    botonAgregar.addEventListener("click", () => {
-      this.mostrarRegistroEgresos();
+    encabezado.appendChild(botonAgregar);
+
+    // Añadir el header al contenedor principal
+    tablaEgresos.appendChild(encabezado);
+
+    // Estructura HTML de la tabla
+    tablaEgresos.innerHTML += `
+    <table>
+      <thead>
+        <tr>
+          <th>Descripción</th>
+          <th>Monto</th>
+          <th>Categoría</th>
+          <th>Fecha</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-ingresos-body"> 
+        <!-- Aquí se llenarán las filas dinámicamente -->
+      </tbody>
+    </table>
+  `;
+
+  return tablaEgresos;
+}
+
+actualizarTablaEgresos() {
+  const finanzas = new Finanzas(this.#IdUser); // Reemplazar con el ID de usuario correcto
+  const egresos = finanzas.getEgresos(); // Obtener los egresos del usuario
+  const tbody = document.getElementById("tabla-ingresos-body"); // Usar el mismo ID para el tbody
+  tbody.innerHTML = ""; // Limpiar filas previas
+
+  // Iterar por cada egreso y generar filas dinámicamente
+  egresos.forEach((egreso, index) => {
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>${egreso.descripcion}</td>
+      <td>${egreso.monto}</td>
+      <td>${egreso.categoria}</td>
+      <td>${egreso.fecha}</td>
+      <td>
+        <button class="btn-modificar" data-index="${index}">
+          <i class="bi bi-pencil-square"></i>
+        </button>
+        <button class="btn-eliminar" data-index="${index}">
+          <i class="bi bi-trash"></i>
+        </button>
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+
+  // Asignar eventos a los botones de modificar y eliminar
+  tbody.querySelectorAll(".btn-modificar-ingreso").forEach((button) => {
+    button.addEventListener("click", (e) => {
+      const index = e.currentTarget.getAttribute("data-index");
+      this.mostrarFormularioModificarEgreso(index);
     });
-
-    tablaEgresos.appendChild(botonAgregar);
-    containerApp.appendChild(tablaEgresos);
-
-    this.actualizarTablaEgresos(); // Llamar a la función para llenar la tabla inicialmente
-  }
-
-  actualizarTablaEgresos() {
-    const finanzas = new Finanzas(1); // Reemplazar con el ID de usuario correcto
-    const egresos = finanzas.getEgresos();
-    const tbody = document.getElementById("tabla-egresos-body");
-    tbody.innerHTML = ""; // Limpiar contenido previo
-
-    egresos.forEach((egreso, index) => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${egreso.descripcion}</td>
-        <td>${egreso.monto}</td>
-        <td>${egreso.categoria}</td>
-        <td>
-          <button class="btn-modificar" data-index="${index}">
-            <i class="bi bi-pencil-square"></i>
-          </button>
-          <button class="btn-eliminar" data-index="${index}">
-            <i class="bi bi-trash"></i>
-          </button>
-        </td>
-      `;
-      tbody.appendChild(tr);
-    });
-
-    // Agregar eventos a los botones de modificar y eliminar
-    tbody.querySelectorAll(".btn-modificar").forEach((button) => {
-      button.addEventListener("click", (e) => {
-        const index = e.currentTarget.getAttribute("data-index");
-        this.mostrarFormularioModificarEgreso(index);
-      });
-    });
-
-    tbody.querySelectorAll(".btn-eliminar").forEach((button) => {
-      button.addEventListener("click", (e) => {
-        const index = e.currentTarget.getAttribute("data-index");
-        alertConfirm("Eliminar Egreso", "¿Estás seguro de eliminar este egreso?", () => {
-          finanzas.eliminarEgreso(index);
-          this.actualizarTablaEgresos();
-        });
-      });
-    });
-  }
+  });
+}
 
   mostrarFormularioModificarIngreso(index) {
-    const finanzas = new Finanzas(1); // Reemplazar con el ID de usuario correcto
-    const ingreso = finanzas.getIngresos()[index];
+    const finanzas = new Finanzas(this.#IdUser); // Reemplazar con el ID de usuario correcto
+    const ingreso = finanzas.getIngresos()[parseInt(index)];
+    console.log(ingreso);
 
     const formConfig = {
       title: "Modificar Ingreso",
       fields: [
-        { type: "text", name: "descripcion", placeholder: "Descripción", label: "Descripción", value: ingreso.descripcion },
-        { type: "number", name: "monto", placeholder: "Monto", label: "Monto", value: ingreso.monto },
-        { type: "text", name: "categoria", placeholder: "Categoría", label: "Categoría", value: ingreso.categoria },
+        {
+          type: "text",
+          name: "descripcion",
+          placeholder: "Descripción",
+          label: "Descripción",
+          value: ingreso.descripcion,
+        },
+        {
+          type: "number",
+          name: "monto",
+          placeholder: "Monto",
+          label: "Monto",
+          value: ingreso.monto,
+        },
+        {
+          type: "text",
+          name: "categoria",
+          placeholder: "Categoría",
+          label: "Categoría",
+          value: ingreso.categoria,
+        },
       ],
       submitText: "Modificar",
     };
 
     const form = createForm(formConfig, (data) => {
-      finanzas.eliminarIngreso(index);
-      finanzas.setIngreso(data.descripcion, parseFloat(data.monto), data.categoria);
-      alertOk("Ingreso Modificado", "El ingreso ha sido modificado correctamente.");
+      finanzas.eliminarIngreso(this.#IdUser);
+      finanzas.setIngreso(
+        data.descripcion,
+        parseFloat(data.monto),
+        data.categoria
+      );
+      alertOk(
+        "Ingreso Modificado",
+        "El ingreso ha sido modificado correctamente."
+      );
       document.body.removeChild(modalOverlay); // Eliminar el modal después de modificar
       this.actualizarTablaIngresos(); // Actualizar la tabla de ingresos
     });
@@ -587,23 +695,48 @@ export class App {
   }
 
   mostrarFormularioModificarEgreso(index) {
-    const finanzas = new Finanzas(1); // Reemplazar con el ID de usuario correcto
+    const finanzas = new Finanzas(this.#IdUser); // Reemplazar con el ID de usuario correcto
     const egreso = finanzas.getEgresos()[index];
 
     const formConfig = {
       title: "Modificar Egreso",
       fields: [
-        { type: "text", name: "descripcion", placeholder: "Descripción", label: "Descripción", value: egreso.descripcion },
-        { type: "number", name: "monto", placeholder: "Monto", label: "Monto", value: egreso.monto },
-        { type: "text", name: "categoria", placeholder: "Categoría", label: "Categoría", value: egreso.categoria },
+        {
+          type: "text",
+          name: "descripcion",
+          placeholder: "Descripción",
+          label: "Descripción",
+          value: egreso.descripcion,
+        },
+        {
+          type: "number",
+          name: "monto",
+          placeholder: "Monto",
+          label: "Monto",
+          value: egreso.monto,
+        },
+        {
+          type: "text",
+          name: "categoria",
+          placeholder: "Categoría",
+          label: "Categoría",
+          value: egreso.categoria,
+        },
       ],
       submitText: "Modificar",
     };
 
     const form = createForm(formConfig, (data) => {
       finanzas.eliminarEgreso(index);
-      finanzas.setEgreso(data.descripcion, parseFloat(data.monto), data.categoria);
-      alertOk("Egreso Modificado", "El egreso ha sido modificado correctamente.");
+      finanzas.setEgreso(
+        data.descripcion,
+        parseFloat(data.monto),
+        data.categoria
+      );
+      alertOk(
+        "Egreso Modificado",
+        "El egreso ha sido modificado correctamente."
+      );
       document.body.removeChild(modalOverlay); // Eliminar el modal después de modificar
       this.actualizarTablaEgresos(); // Actualizar la tabla de egresos
     });
@@ -635,22 +768,44 @@ export class App {
   }
 
   mostrarFormularioModificarMeta(index) {
-    const finanzas = new Finanzas(1); // Reemplazar con el ID de usuario correcto
+    const finanzas = new Finanzas(this.#IdUser); // Reemplazar con el ID de usuario correcto
     const meta = finanzas.getMetas()[index];
 
     const formConfig = {
       title: "Modificar Meta",
       fields: [
-        { type: "text", name: "descripcion", placeholder: "Descripción", label: "Descripción", value: meta.descripcion },
-        { type: "date", name: "fechaLimite", placeholder: "Fecha Límite", label: "Fecha Límite", value: meta.fechaLimite },
-        { type: "number", name: "valor", placeholder: "Valor", label: "Valor", value: meta.valor },
+        {
+          type: "text",
+          name: "descripcion",
+          placeholder: "Descripción",
+          label: "Descripción",
+          value: meta.descripcion,
+        },
+        {
+          type: "date",
+          name: "fechaLimite",
+          placeholder: "Fecha Límite",
+          label: "Fecha Límite",
+          value: meta.fechaLimite,
+        },
+        {
+          type: "number",
+          name: "valor",
+          placeholder: "Valor",
+          label: "Valor",
+          value: meta.valor,
+        },
       ],
       submitText: "Modificar",
     };
 
     const form = createForm(formConfig, (data) => {
       finanzas.eliminarMeta(index);
-      finanzas.setMeta(data.descripcion, data.fechaLimite, parseFloat(data.valor));
+      finanzas.setMeta(
+        data.descripcion,
+        data.fechaLimite,
+        parseFloat(data.valor)
+      );
       alertOk("Meta Modificada", "La meta ha sido modificada correctamente.");
       document.body.removeChild(modalOverlay); // Eliminar el modal después de modificar
       this.actualizarMetas(document.querySelector(".metas-container")); // Actualizar la vista de metas
@@ -681,5 +836,4 @@ export class App {
     // Agregar el overlay al body
     document.body.appendChild(modalOverlay);
   }
-
 }

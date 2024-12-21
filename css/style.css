@@ -335,67 +335,96 @@ body {
 }
 
 /* Estilos para la tabla de ingresos */
+/* Contenedor principal de la tabla */
 .tabla-ingresos {
-  margin-left: 260px; /* Deja espacio para el menú lateral */
+  width: 100%;
   padding: 20px;
 }
 
+/* Encabezado con título y botón */
+.tabla-ingresos-encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.tabla-ingresos-titulo {
+  font-size: 1.5rem;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.btn-agregar {
+  background-color: var(--color-accent);
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 100%;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-agregar:hover {
+  background-color: var(--hover-color);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+/* Estilo de la tabla */
 .tabla-ingresos table {
   width: 100%;
   border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.tabla-ingresos th, .tabla-ingresos td {
-  border: 1px solid #ddd;
-  padding: 8px;
+.tabla-ingresos th,
+.tabla-ingresos td {
+  padding: 15px;
+  text-align: left;
 }
 
 .tabla-ingresos th {
   background-color: var(--color-secondary);
-  color: var(--text-color);
+  color: #fff;
+  font-weight: bold;
 }
 
-.tabla-egresos {
-  margin-left: 260px; /* Deja espacio para el menú lateral */
-  padding: 20px;
+.tabla-ingresos td {
+  border-bottom: 1px solid #ddd;
+  color: #333;
 }
 
-.tabla-egresos table {
-  width: 100%;
-  border-collapse: collapse;
+.tabla-ingresos tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
-.tabla-egresos th, .tabla-egresos td {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-.tabla-egresos th {
-  background-color: var(--color-secondary);
-  color: var(--text-color);
-}
-
-.btn-agregar {
-  display: block;
-  margin: 20px auto 0;
+/* Botones de acción */
+.tabla-ingresos .btn-modificar,
+.tabla-ingresos .btn-eliminar {
   background-color: var(--color-accent);
-  color: var(--text-color);
+  color: #fff;
   border: none;
-  padding: 10px 20px;
-  border-radius: 50%;
-  font-size: 24px;
+  padding: 8px 12px;
+  border-radius: 5px;
   cursor: pointer;
-  transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
-.btn-agregar:hover {
-  background: linear-gradient(to right, var(--hover-color), var(--color-accent));
-  color: var(--color-secondary);
+.tabla-ingresos .btn-modificar:hover {
+  background-color: var(--hover-color);
 }
 
-.btn-agregar:active {
-  background: var(--hover-color);
-  color: var(--color-primary);
+.tabla-ingresos .btn-eliminar {
+  background-color: #ff4d4f;
+}
+
+.tabla-ingresos .btn-eliminar:hover {
+  background-color: #d11a2a;
 }
 
 /* Estilos para el modal del formulario de registro de ingresos */
@@ -405,7 +434,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(216, 209, 209, 0.74);
+  background-color: rgba(28, 47, 74, 0.9); /* Color más oscuro */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -413,39 +442,54 @@ body {
 }
 
 .modal-container {
-  background-color: var(--color-light);
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(241, 239, 239, 0.2);
+  background-color: var(--color-primary); /* Color principal oscuro */
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6); /* Sombra pronunciada */
   width: 90%;
   max-width: 500px;
+  color: var(--text-color);
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.modal-container:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8);
 }
 
 .close-button {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background: red;
+  top: 2%;
+  right: 2%;
+  background: var(--color-accent);
   border: none;
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  font-size: 24px;
+  width: 35px;
+  height: 35px;
+  font-size: 18px;
   cursor: pointer;
   color: var(--text-color);
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
 .close-button:hover {
-  background: darkred;
+  background: var(--hover-color); /* Efecto hover con color de acento */
+  transform: rotate(90deg) scale(1.1); /* Rotación y escalado */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Sombra más marcada */
 }
+
+.close-button:active {
+  transform: scale(0.95); /* Efecto clic */
+  background: var(--color-accent); /* Color consistente al clic */
+}
+
 
 /* Estilos para la vista de metas */
 .metas-container {
-  margin-left: 260px; /* Deja espacio para el menú lateral */
-  padding: 20px;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -466,7 +510,7 @@ body {
   border-radius: 10px;
   padding: 20px;
   margin-top: 20px;
-  width: 80%;
+  width: 50%;
   max-width: 400px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;

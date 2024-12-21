@@ -1,4 +1,5 @@
 import { getStorages, setStorages } from "../funciones/storages.js";
+import { alertError, alertConfirm, alertOk, alertWarning, alertInfo } from "../funciones/alerts.js";
 
 export class Finanzas {
   #IdUser;
@@ -101,8 +102,12 @@ export class Finanzas {
 
   // Eliminar un ingreso
   eliminarIngreso(index) {
-    this.totalIngresos -= this.ingresos[this.#IdUser][index].monto;
+    console.log('ingresos ',this.ingresos[this.#IdUser][0]);
+    
+    console.log('total ',this.totalIngresos);
+    this.totalIngresos -= this.ingresos[this.#IdUser][0].monto;    
     this.ingresos[this.#IdUser].splice(index, 1);
+    console.log('ingresos depsues',this.ingresos[this.#IdUser][0]);
     this.actualizarBalance();
     this.saveData(); // Guardar después de actualizar
   }

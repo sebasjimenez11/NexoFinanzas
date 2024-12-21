@@ -1,7 +1,15 @@
-import { CerrarSesion, mostrarInicioSesion, mostrarRegistro } from "./usuario.js";
+import {
+  CerrarSesion,
+  mostrarInicioSesion,
+  mostrarRegistro,
+} from "./usuario.js";
 import { App } from "../clases/App.js";
 import { getStorages } from "./storages.js";
-import { mostrarDashboard } from "./finanzas.js";
+import {
+  mostrarDashboard,
+  mostrarEgresos,
+  mostrarIngresos,
+} from "./dasboard.js";
 
 export function createHorizontalMenu() {
   const menuContainer = document.createElement("nav");
@@ -49,10 +57,8 @@ export function createHorizontalMenu() {
   menuContainer.appendChild(logoDiv);
   menuContainer.appendChild(ul);
 
-  return menuContainer
+  return menuContainer;
 }
-
-
 
 // Menú lateral
 export function createSidebarMenu() {
@@ -93,24 +99,19 @@ export function createSidebarMenu() {
     {
       text: "Resumen",
       icon: "bi bi-speedometer2",
-      callback: () => mostrarDashboard()
+      callback: () => mostrarDashboard(),
     },
     {
       text: "Registro Ingresos",
       icon: "bi bi-cash-coin",
       callback: () => {
-        const app = new App();
-        app.mostrarTablaIngresos();
-
-      }
+        mostrarIngresos();
+      },
     },
     {
       text: "Registro Egresos",
       icon: "bi bi-credit-card",
-      callback: () => {
-        const app = new App();
-        app.mostrarTablaEgresos();
-      }
+      callback: () => mostrarEgresos(),
     },
     {
       text: "Metas Financieras",
@@ -118,7 +119,7 @@ export function createSidebarMenu() {
       callback: () => {
         const app = new App();
         app.mostrarMetas();
-      }
+      },
     },
   ];
 
@@ -138,7 +139,7 @@ export function createSidebarMenu() {
     // Agregar evento click con el callback
     link.addEventListener("click", (e) => {
       e.preventDefault(); // Prevenir comportamiento por defecto del enlace
-      item.callback();    // Ejecutar el callback asociado al elemento
+      item.callback(); // Ejecutar el callback asociado al elemento
     });
 
     li.appendChild(link);

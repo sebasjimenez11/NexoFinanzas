@@ -1,5 +1,5 @@
 // Función para crear un input genérico
-function createInput(type, name, placeholder, labelText) {
+function createInput(type, name, placeholder, labelText, value, required) {
   const inputContainer = document.createElement("div");
 
   // Crear etiqueta
@@ -15,6 +15,10 @@ function createInput(type, name, placeholder, labelText) {
   input.id = name;
   input.placeholder = placeholder;
   input.className = "form-input";
+  input.value = value ?? '';
+  if (required) {
+    input.required = true; // Hace que el campo sea requerido
+  }
 
   // Armar el contenedor
   inputContainer.appendChild(label);
@@ -24,7 +28,7 @@ function createInput(type, name, placeholder, labelText) {
 }
 
 // Función para crear un select genérico
-function createSelect(name, options, labelText) {
+function createSelect(name, options, labelText, value, required) {
   const selectContainer = document.createElement("div");
 
   // Crear etiqueta
@@ -38,19 +42,28 @@ function createSelect(name, options, labelText) {
   select.name = name;
   select.id = name;
   select.className = "form-select";
+  if (required) {
+    select.required = true; // Hace que el select sea requerido
+  }
 
   // Crear opciones
   options.forEach((optionText) => {
     const option = document.createElement("option");
     option.value = optionText.toLowerCase();
     option.innerText = optionText;
+
+    // Selecciona la opción si coincide con el valor inicial
+    if (value && option.value === value.toLowerCase()) {
+      option.selected = true;
+    }
+
     select.appendChild(option);
   });
 
   // Armar el contenedor
   selectContainer.appendChild(label);
   selectContainer.appendChild(select);
-  
+
   return selectContainer;
 }
 
@@ -86,7 +99,13 @@ export function createForm(params, submitCallback) {
 
     switch (field.type) {
       case "select":
-        element = createSelect(field.name, field.options, field.label);
+        element = createSelect(
+          field.name,
+          field.options,
+          field.label,
+          field.value ?? '', // Valor inicial
+          field.required ?? false // Campo requerido
+        );
         break;
       case "button":
         element = createButton(field.label, field.callback);
@@ -96,7 +115,9 @@ export function createForm(params, submitCallback) {
           field.type,
           field.name,
           field.placeholder,
-          field.label
+          field.label,
+          field.value ?? '', // Valor inicial
+          field.required ?? false // Campo requerido
         );
         break;
     }

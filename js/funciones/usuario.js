@@ -1,10 +1,15 @@
 import { User } from "../clases/User.js";
 import { alertOk, alertError, alertConfirm } from "./alerts.js";
-import { getStorages, setStorages, getAllStorages, removeStorages } from "./storages.js";
+import {
+  getStorages,
+  setStorages,
+  getAllStorages,
+  removeStorages,
+} from "./storages.js";
 import { createForm } from "./formulario.js";
 import { App } from "../clases/App.js";
 import { createHorizontalMenu, createSidebarMenu } from "./menus.js";
-import { mostrarDashboard } from "./finanzas.js";
+import { mostrarDashboard } from "./dasboard.js";
 // const continerForm = document.getElementById("contenedor-login-register");
 const containerApp = document.getElementById("container-app");
 const app = new App();
@@ -49,14 +54,14 @@ export function iniciarSesion(data) {
     setStorages("idUser", id); // Guardar el id del usuario
     mostrarDashboard();
     setTimeout(() => {
-        alertInfo(
-          "Sesión Expirada",
-          "Su sesión ha expirado. Por favor inicie sesión nuevamente."
-        );
-        removeStorages("idUser");
-        containerApp.innerHTML = "";
-        containerApp.appendChild(createHorizontalMenu());
-      }, 300000);
+      alertInfo(
+        "Sesión Expirada",
+        "Su sesión ha expirado. Por favor inicie sesión nuevamente."
+      );
+      removeStorages("idUser");
+      containerApp.innerHTML = "";
+      containerApp.appendChild(createHorizontalMenu());
+    }, 300000);
   } else {
     alertError(
       "Error de Login",
@@ -65,25 +70,38 @@ export function iniciarSesion(data) {
   }
 }
 
-
 export function mostrarRegistro() {
   containerApp.innerHTML = "";
   const formConfig = {
     title: "Registro",
     fields: [
-      { type: "text", name: "nombre", placeholder: "Nombre", label: "Nombre" },
+      {
+        type: "text",
+        name: "nombre",
+        placeholder: "Nombre",
+        label: "Nombre",
+        required: true,
+      },
       {
         type: "text",
         name: "apellido",
         placeholder: "Apellido",
         label: "Apellido",
+        required: true,
       },
-      { type: "email", name: "correo", placeholder: "Correo", label: "Correo" },
+      {
+        type: "email",
+        name: "correo",
+        placeholder: "Correo",
+        label: "Correo",
+        required: true,
+      },
       {
         type: "password",
         name: "password",
         placeholder: "Contraseña",
         label: "Contraseña",
+        required: true,
       },
     ],
     submitText: "Registro",
@@ -105,12 +123,14 @@ export function mostrarInicioSesion() {
         name: "correo",
         placeholder: "Correo",
         label: "Correo",
+        required: true,
       },
       {
         type: "password",
         name: "password",
         placeholder: "Contraseña",
         label: "Contraseña",
+        required: true,
       },
     ],
     submitText: "Iniciar de Sesión",
@@ -122,12 +142,12 @@ export function mostrarInicioSesion() {
   containerApp.appendChild(div);
 }
 
-export function CerrarSesion(){
-    alertConfirm("Cerrar Sesión", "¿Estás seguro de cerrar sesión?", () => {
-        removeStorages("idUser");
-        alertOk("Cierre de Sesión", "Sesión cerrada correctamente.");
-        salirFormulario();
-    })
+export function CerrarSesion() {
+  alertConfirm("Cerrar Sesión", "¿Estás seguro de cerrar sesión?", () => {
+    removeStorages("idUser");
+    alertOk("Cierre de Sesión", "Sesión cerrada correctamente.");
+    salirFormulario();
+  });
 }
 
 export function salirFormulario() {

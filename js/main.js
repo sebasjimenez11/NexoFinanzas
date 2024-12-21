@@ -22,6 +22,5 @@ document.addEventListener("DOMContentLoaded", () => {
     containerApp.appendChild(createHorizontalMenu());
     containerApp.appendChild(app.mostrarInicio());
   }
-  //    const gemini = new GeminiAPI();
 });
 
